@@ -8,24 +8,27 @@ namespace DryerDuty;
 
 public class DryerMonitor: IHostedService, IDisposable {
 
-    private const int    SAMPLES_PER_WINDOW      = 120; // 120Hz, Nyquist limit for 60Hz AC sine wave
-    private const double SAMPLING_WINDOW_SECONDS = 1.0;
-    private const int    VOLTAGE_DIVIDER_OFFSET  = 1024 / 2; // MCP3008 outputs 10-bit unsigned integers, and voltage divider shifts signal up by 512 to preserve negative values
-    private const int    POWER_BUTTON_CHANNEL    = 0;
-    private const int    DOOR_LIGHT_CHANNEL      = 1;
+    private const int    SAMPLES_PER_WINDOW                   = 120; // 120Hz, Nyquist limit for 60Hz AC sine wave
+    private const int    MOTOR_CHANNEL                        = 0;
+    private const int    LIGHT_CHANNEL                        = 1;
+    private const int    MAX_ADC_READING                      = (2 << 9) - 1;
+    private const double REFERENCE_VOLTS                      = 3.3;
+    private const double MAX_CURRENT_TRANSFORMER_OUTPUT_VOLTS = 1;
 
     private readonly ILogger<DryerMonitor> logger;
     private readonly PagerDutyManager      pagerDutyManager;
     private readonly Configuration         config;
     private readonly SpiDevice             spi = SpiDevice.Create(new SpiConnectionSettings(0, 0) { ClockFrequency = 1_000_000 });
     private readonly Mcp3xxx               adc;
-    private readonly Timer                 samplingTimer    = new(TimeSpan.FromSeconds(SAMPLING_WINDOW_SECONDS / SAMPLES_PER_WINDOW)) { AutoReset = true };
-    private readonly Timer                 aggregatingTimer = new(TimeSpan.FromSeconds(SAMPLING_WINDOW_SECONDS)) { AutoReset                      = true };
+    private readonly TimeSpan              samplingWindow = TimeSpan.FromSeconds(1);
+    private readonly Timer                 samplingTimer;
+    private readonly Timer                 aggregatingTimer;
+    private readonly int[][]               samplesByChannel          = new int[2][];
+    private readonly int[]                 maxCurrentTransformerAmps = { 60, 5 };
 
-    internal         LaundryMachineState? state;
-    internal         string?              pagerDutyLaundryDoneDedupKey;
-    private readonly int[][]              samplesByChannel          = new int[2][];
-    private readonly int[]                sampleWriteIndexByChannel = { 0, 0 };
+    private LaundryMachineState? state;
+    private string?              pagerDutyLaundryDoneDedupKey;
+    private int                  sampleWriteIndex;
 
     public DryerMonitor(ILogger<DryerMonitor> logger, PagerDutyManager pagerDutyManager, Configuration config) {
         this.logger           = logger;
@@ -36,18 +39,19 @@ public class DryerMonitor: IHostedService, IDisposable {
             samplesByChannel[i] = new int[SAMPLES_PER_WINDOW];
         }
 
-        adc = new Mcp3008(spi);
+        adc              = new Mcp3008(spi);
+        aggregatingTimer = new Timer(samplingWindow) { AutoReset                            = true };
+        samplingTimer    = new Timer(samplingWindow.Divide(SAMPLES_PER_WINDOW)) { AutoReset = true };
 
         samplingTimer.Elapsed    += onSample;
         aggregatingTimer.Elapsed += aggregateSamplesInWindow;
     }
 
-    private int activeAdcChannel => state == LaundryMachineState.COMPLETE ? DOOR_LIGHT_CHANNEL : POWER_BUTTON_CHANNEL;
-
-    public Task StartAsync(CancellationToken cancellationToken) {
+    public async Task StartAsync(CancellationToken cancellationToken) {
         samplingTimer.Start();
+        await Task.Delay(samplingWindow, cancellationToken);
         aggregatingTimer.Start();
-        return Task.CompletedTask;
+        logger.LogInformation("Timers started");
     }
 
     public Task StopAsync(CancellationToken cancellationToken) {
@@ -57,27 +61,32 @@ public class DryerMonitor: IHostedService, IDisposable {
     }
 
     private void onSample(object? sender, ElapsedEventArgs e) {
-        int channel          = activeAdcChannel;
-        int sampleWriteIndex = sampleWriteIndexByChannel[channel];
+        for (int channel = 0; channel < samplesByChannel.Length; channel++) {
+            samplesByChannel[channel][sampleWriteIndex] = adc.Read(channel); // sample is in the range [0, 1024)
+        }
 
-        samplesByChannel[channel][sampleWriteIndex] = adc.Read(channel); // sample is in the range [0, 1024)
-
-        sampleWriteIndexByChannel[channel] = (sampleWriteIndex + 1) % SAMPLES_PER_WINDOW;
+        sampleWriteIndex = (sampleWriteIndex + 1) % SAMPLES_PER_WINDOW;
     }
 
-    private void aggregateSamplesInWindow(object? sender, ElapsedEventArgs e) {
-        double rmsVolts = samplesByChannel[activeAdcChannel].Aggregate(0.0, sumSquares, rootOfMean);
+    private double getRmsAmps(int channel) =>
+        samplesByChannel[channel].Aggregate(0.0,
+            (sum, sample) => sum + Math.Pow(
+                (((sample - MAX_ADC_READING / 2.0) / (REFERENCE_VOLTS / 2) + MAX_ADC_READING / 2.0) / MAX_ADC_READING * REFERENCE_VOLTS - REFERENCE_VOLTS / 2) /
+                MAX_CURRENT_TRANSFORMER_OUTPUT_VOLTS * maxCurrentTransformerAmps[channel], 2),
+            sumOfSquares => Math.Sqrt(sumOfSquares / SAMPLES_PER_WINDOW));
 
-        logger.LogTrace("ch{adcChannel}: {volts:N6}", activeAdcChannel, rmsVolts);
+    private void aggregateSamplesInWindow(object? sender, ElapsedEventArgs e) {
+        double motorAmps = getRmsAmps(MOTOR_CHANNEL) * config.motorGain;
+        double lightAmps = getRmsAmps(LIGHT_CHANNEL) * config.lightGain;
 
         LaundryMachineState newState = state switch {
-            LaundryMachineState.IDLE or null when rmsVolts >= config.powerButtonMinimumActiveVolts => LaundryMachineState.ACTIVE,
-            LaundryMachineState.ACTIVE when rmsVolts < config.powerButtonMinimumActiveVolts        => LaundryMachineState.COMPLETE,
-            LaundryMachineState.COMPLETE when rmsVolts >= config.doorLightMinimumIlluminatedVolts  => LaundryMachineState.IDLE,
-            _                                                                                      => state ?? LaundryMachineState.IDLE
+            LaundryMachineState.IDLE or null when motorAmps >= config.motorMinimumActiveAmps => LaundryMachineState.ACTIVE,
+            LaundryMachineState.ACTIVE when motorAmps < config.motorMinimumActiveAmps        => LaundryMachineState.COMPLETE,
+            LaundryMachineState.COMPLETE when lightAmps >= config.lightMinimumActiveAmps     => LaundryMachineState.IDLE,
+            _                                                                                => state ?? LaundryMachineState.IDLE
         };
 
-        logger.LogDebug("Dryer is {state}, using {power:N0} VAC RMS on ADC channel {adcChannel}", state, rmsVolts, activeAdcChannel);
+        logger.LogTrace("Dryer is {state}, using {motorAmps:N3} amps for the motor and {lightAmps:N3} amps for the light", newState, motorAmps, lightAmps);
 
         if (state != null && state != newState) {
 #pragma warning disable CS4014 // don't need to wait for a PagerDuty API response before storing the new state and polling again
@@ -87,13 +96,6 @@ public class DryerMonitor: IHostedService, IDisposable {
 
         state = newState;
     }
-
-    private static double sumSquares(double sum, int sample) {
-        double signedSampleVoltage = (sample - VOLTAGE_DIVIDER_OFFSET) / (double) VOLTAGE_DIVIDER_OFFSET; // signedSampleVoltage is in the range [-1.0, 1.0) volts
-        return sum + signedSampleVoltage * signedSampleVoltage;
-    }
-
-    private static double rootOfMean(double sumSquared) => Math.Sqrt(sumSquared / SAMPLES_PER_WINDOW);
 
     private async Task onStateChange(LaundryMachineState newState) {
         switch (newState) {
@@ -120,10 +122,11 @@ public class DryerMonitor: IHostedService, IDisposable {
     }
 
     public void Dispose() {
-        spi.Dispose();
-        adc.Dispose();
-        samplingTimer.Dispose();
         aggregatingTimer.Dispose();
+        samplingTimer.Dispose();
+        adc.Dispose();
+        spi.Dispose();
+        GC.SuppressFinalize(this);
     }
 
 }

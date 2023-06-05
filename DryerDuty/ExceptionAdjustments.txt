@@ -6,3 +6,5 @@
 # See ECMA-334, 5th Ed. § D.4.2 "ID string format" for a description of the ID format.
 
 P:System.Array.Length get -T:System.OverflowException
+M:System.Threading.Tasks.Task.Delay(System.TimeSpan,System.Threading.CancellationToken) -T:System.Threading.Tasks.TaskCanceledException
+M:System.TimeSpan.FromSeconds(System.Double) -T:System.OverflowException

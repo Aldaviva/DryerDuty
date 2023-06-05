@@ -13,7 +13,8 @@ Description=DryerDuty
 
 [Service]
 Type=notify
-ExecStart=/usr/local/bin/dryerduty
+ExecStart=/opt/dryerduty/DryerDuty
+WorkingDirectory=/opt/dryerduty/
 
 [Install]
 WantedBy=multi-user.target
