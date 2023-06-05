@@ -1,7 +1,4 @@
 ﻿using DryerDuty;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Pager.Duty;
 
 using IHost host = Host.CreateDefaultBuilder(args)

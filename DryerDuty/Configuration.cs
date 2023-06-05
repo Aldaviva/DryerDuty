@@ -2,7 +2,8 @@
 
 public class Configuration {
 
-    public int pollingIntervalMilliseconds { get; set; } = 15_000;
     public string pagerDutyIntegrationKey { get; set; } = null!;
+    public double powerButtonMinimumActiveVolts { get; set; }
+    public double doorLightMinimumIlluminatedVolts { get; set; }
 
 }

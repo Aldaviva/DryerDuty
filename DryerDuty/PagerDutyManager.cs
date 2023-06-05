@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Pager.Duty;
+﻿using Pager.Duty;
 
 namespace DryerDuty;
 
@@ -26,7 +25,7 @@ public class PagerDutyManagerImpl: PagerDutyManager {
     public async Task createChange() {
         try {
             await pagerDuty.Send(new Change("The dryer is starting a load of laundry."));
-            logger.LogDebug("Created change event in PagerDuty");
+            logger.LogDebug("Created Change event in PagerDuty");
         } catch (PagerDutyException e) {
             logger.LogWarning(e, "Failed to create Change event in PagerDuty");
         }
