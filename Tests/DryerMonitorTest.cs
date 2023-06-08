@@ -108,7 +108,11 @@ public class DryerMonitorTest: IDisposable {
     [Fact]
     public void publicConstructor() {
         Action thrower = () => new DryerMonitor(NullLogger<DryerMonitor>.Instance, pagerDutyManager, config);
-        thrower.Should().Throw<PlatformNotSupportedException>();
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+            thrower.Should().Throw<PlatformNotSupportedException>();
+        } else {
+            thrower.Should().NotThrow<PlatformNotSupportedException>();
+        }
     }
 
     public void Dispose() {

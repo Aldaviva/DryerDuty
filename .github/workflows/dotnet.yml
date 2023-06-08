@@ -23,15 +23,15 @@ jobs:
         domain: ${{ github.repository_owner }}
 
     - name: Restore
-      run: dotnet restore --locked-mode --verbosity normal
+      run: dotnet restore --locked-mode
 
     - name: Build
-      run: dotnet build ${{ env.ProjectName }} --no-restore --configuration Release --runtime ${{ env.TargetPlatform }} --no-self-contained --verbosity normal
+      run: dotnet build ${{ env.ProjectName }} --no-restore --configuration Release --runtime ${{ env.TargetPlatform }} --no-self-contained
 
     - name: Test
       shell: bash
       run: |
-        dotnet test --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --settings Tests/Tests.runsettings --logger "trx;LogFileName=TestResults.xml"
+        dotnet test --configuration Release --collect:"XPlat Code Coverage" --settings Tests/Tests.runsettings --logger "trx;LogFileName=TestResults.xml"
         echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
         cp Tests/TestResults/*/coverage.info Tests/TestResults
         exit 0
