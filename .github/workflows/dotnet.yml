@@ -23,7 +23,7 @@ jobs:
         domain: ${{ github.repository_owner }}
 
     - name: Restore
-      run: dotnet restore --runtime ${{ env.TargetPlatform }} --locked-mode --verbosity normal
+      run: dotnet restore --locked-mode --verbosity normal
 
     - name: Build
       run: dotnet build --no-restore --configuration Release --runtime ${{ env.TargetPlatform }} --no-self-contained --verbosity normal
