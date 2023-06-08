@@ -8,17 +8,16 @@ namespace DryerDuty;
 
 public class DryerMonitor: IHostedService, IDisposable {
 
-    private const int    SAMPLES_PER_WINDOW                   = 120; // 120Hz, Nyquist limit for 60Hz AC sine wave
-    private const int    MOTOR_CHANNEL                        = 0;
-    private const int    LIGHT_CHANNEL                        = 1;
-    private const int    MAX_ADC_READING                      = (2 << 9) - 1;
-    private const double REFERENCE_VOLTS                      = 3.3;
-    private const double MAX_CURRENT_TRANSFORMER_OUTPUT_VOLTS = 1;
+    internal const int    SAMPLES_PER_WINDOW                   = 120; // 120Hz, Nyquist limit for 60Hz AC sine wave
+    private const  int    MOTOR_CHANNEL                        = 0;
+    private const  int    LIGHT_CHANNEL                        = 1;
+    private const  int    MAX_ADC_READING                      = (2 << 9) - 1;
+    private const  double REFERENCE_VOLTS                      = 3.3;
+    private const  double MAX_CURRENT_TRANSFORMER_OUTPUT_VOLTS = 1;
 
     private readonly ILogger<DryerMonitor> logger;
     private readonly PagerDutyManager      pagerDutyManager;
     private readonly Configuration         config;
-    private readonly SpiDevice             spi = SpiDevice.Create(new SpiConnectionSettings(0, 0) { ClockFrequency = 1_000_000 });
     private readonly Mcp3xxx               adc;
     private readonly TimeSpan              samplingWindow = TimeSpan.FromSeconds(1);
     private readonly Timer                 samplingTimer;
@@ -26,11 +25,14 @@ public class DryerMonitor: IHostedService, IDisposable {
     private readonly int[][]               samplesByChannel          = new int[2][];
     private readonly int[]                 maxCurrentTransformerAmps = { 60, 5 };
 
-    private LaundryMachineState? state;
-    private string?              pagerDutyLaundryDoneDedupKey;
-    private int                  sampleWriteIndex;
+    internal LaundryMachineState? state;
+    internal string?              pagerDutyLaundryDoneDedupKey;
+    private  int                  sampleWriteIndex;
 
-    public DryerMonitor(ILogger<DryerMonitor> logger, PagerDutyManager pagerDutyManager, Configuration config) {
+    public DryerMonitor(ILogger<DryerMonitor> logger, PagerDutyManager pagerDutyManager, Configuration config): this(logger, pagerDutyManager, config,
+        new Mcp3008(SpiDevice.Create(new SpiConnectionSettings(0, 0) { ClockFrequency = 1_000_000 }))) { }
+
+    internal DryerMonitor(ILogger<DryerMonitor> logger, PagerDutyManager pagerDutyManager, Configuration config, Mcp3xxx adc) {
         this.logger           = logger;
         this.pagerDutyManager = pagerDutyManager;
         this.config           = config;
@@ -39,28 +41,35 @@ public class DryerMonitor: IHostedService, IDisposable {
             samplesByChannel[i] = new int[SAMPLES_PER_WINDOW];
         }
 
-        adc              = new Mcp3008(spi);
+        this.adc         = adc;
         aggregatingTimer = new Timer(samplingWindow) { AutoReset                            = true };
         samplingTimer    = new Timer(samplingWindow.Divide(SAMPLES_PER_WINDOW)) { AutoReset = true };
 
         samplingTimer.Elapsed    += onSample;
-        aggregatingTimer.Elapsed += aggregateSamplesInWindow;
+        aggregatingTimer.Elapsed += async (_, _) => await aggregateSamplesInWindow();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken) {
         samplingTimer.Start();
-        await Task.Delay(samplingWindow, cancellationToken);
+
+        try {
+            // Give the sample buffer time to fill before starting to aggregate its contents
+            await Task.Delay(samplingWindow, cancellationToken);
+        } catch (TaskCanceledException) {
+            return;
+        }
+
         aggregatingTimer.Start();
         logger.LogInformation("Timers started");
     }
 
     public Task StopAsync(CancellationToken cancellationToken) {
-        samplingTimer.Stop();
         aggregatingTimer.Stop();
+        samplingTimer.Stop();
         return Task.CompletedTask;
     }
 
-    private void onSample(object? sender, ElapsedEventArgs e) {
+    internal void onSample(object? sender = null, ElapsedEventArgs? e = null) {
         for (int channel = 0; channel < samplesByChannel.Length; channel++) {
             samplesByChannel[channel][sampleWriteIndex] = adc.Read(channel); // sample is in the range [0, 1024)
         }
@@ -75,7 +84,7 @@ public class DryerMonitor: IHostedService, IDisposable {
                 MAX_CURRENT_TRANSFORMER_OUTPUT_VOLTS * maxCurrentTransformerAmps[channel], 2),
             sumOfSquares => Math.Sqrt(sumOfSquares / SAMPLES_PER_WINDOW));
 
-    private void aggregateSamplesInWindow(object? sender, ElapsedEventArgs e) {
+    internal async Task aggregateSamplesInWindow() {
         double motorAmps = getRmsAmps(MOTOR_CHANNEL) * config.motorGain;
         double lightAmps = getRmsAmps(LIGHT_CHANNEL) * config.lightGain;
 
@@ -88,13 +97,12 @@ public class DryerMonitor: IHostedService, IDisposable {
 
         logger.LogTrace("Dryer is {state}, using {motorAmps:N3} amps for the motor and {lightAmps:N3} amps for the light", newState, motorAmps, lightAmps);
 
-        if (state != null && state != newState) {
-#pragma warning disable CS4014 // don't need to wait for a PagerDuty API response before storing the new state and polling again
-            onStateChange(newState);
-#pragma warning restore CS4014
-        }
-
+        bool stateChanged = state != null && state != newState;
         state = newState;
+
+        if (stateChanged) {
+            await onStateChange(newState);
+        }
     }
 
     private async Task onStateChange(LaundryMachineState newState) {
@@ -115,9 +123,6 @@ public class DryerMonitor: IHostedService, IDisposable {
                 await pagerDutyManager.resolveIncident(pagerDutyLaundryDoneDedupKey);
                 pagerDutyLaundryDoneDedupKey = null;
                 break;
-
-            default:
-                break;
         }
     }
 
@@ -125,7 +130,7 @@ public class DryerMonitor: IHostedService, IDisposable {
         aggregatingTimer.Dispose();
         samplingTimer.Dispose();
         adc.Dispose();
-        spi.Dispose();
+        // The Mcp3Base superclass of adc disposes of the SpiDevice instance.
         GC.SuppressFinalize(this);
     }
 

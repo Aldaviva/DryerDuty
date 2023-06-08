@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RuntimeIdentifier>linux-arm</RuntimeIdentifier>
+        <Platforms>AnyCPU;x86</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

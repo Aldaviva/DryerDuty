@@ -34,7 +34,7 @@ DryerDuty
     - [USB Wi-Fi adapter](https://www.canakit.com/raspberry-pi-wifi.html), unless you have a Raspberry Pi 3 or newer with built-in Wi-Fi
     - A micro-USB AC adapter with a long enough cable to reach the top of the dryer
 - [.NET 7 ARM Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
-    - Distribution package archives don't offer ARM packages of .NET, so you have to install it using the [official installation script](https://dotnet.microsoft.com/en-us/download/dotnet/scripts)
+    - Distribution package archives don't offer ARM packages of .NET, so you have to install it using the [official installation script](https://dotnet.microsoft.com/en-us/download/dotnet/scripts).
         ```sh
         wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
         sudo bash dotnet-install.sh --channel STS --runtime dotnet --install-dir /usr/share/dotnet/
@@ -45,8 +45,8 @@ DryerDuty
 - [PagerDuty account](https://www.pagerduty.com/sign-up/) (the [free plan](https://www.pagerduty.com/sign-up-free/?type=free) is sufficient)
 - Clothes dryer
     - [Kenmore 500 series 11065102310 240V 26A electric dryer](https://www.searspartsdirect.com/model/32k35liyt3-000582/kenmore-11065102310-dryer-parts)
-    - The door light must be working for this program to detect when the door is opened, so you must replace the bulb if it has burned out
-    - Make sure you use the OEM-style [E12 incandescent door light bulbs](https://www.amazon.com/dp/B07XNPL2RW) instead of [LED replacements](https://www.amazon.com/dp/B08K32T7Y2), because the LEDs don't draw enough current to be easily detectable
+    - The door light must be working for this program to detect when the door is opened, so you must replace the bulb if it has burned out.
+    - Make sure you use the OEM-style [E12 incandescent door light bulbs](https://www.amazon.com/dp/B07XNPL2RW) instead of [LED replacements](https://www.amazon.com/dp/B08K32T7Y2), because the LEDs don't draw enough current to be easily detectable.
 - Current sensor circuit [(DigiKey shared cart)](https://www.digikey.com/short/8288b5q3)
     - [YHDC 60A voltage output current sensing clamp transformer](https://www.digikey.com/en/products/detail/seeed-technology-co-ltd/101990064/5487440) to non-invasively measure the motor current and output a proportional voltage in the range [0,1] V
     - [YHDC 5A voltage output current sending clamp transformer](https://www.digikey.com/en/products/detail/seeed-technology-co-ltd/101990058/5487435) for the door light current which is much less than the motor current
@@ -60,9 +60,7 @@ DryerDuty
 <a id="circuit-diagrams"></a>
 ## Circuit diagrams
 
-<!-- |Visual view|Schematic view|
-|---|---|
-|<img src="Circuit/Current sensor.svg" alt="current sensor circuit, visual view" />|<img src="Circuit/Current sensor schematics.svg" alt="current sensor circuit, schematic view" />| -->
+### Current sensor
 
 <table>
 <thead>
@@ -82,11 +80,13 @@ DryerDuty
 </tbody>
 </table>
 
+### Dryer
+
 <p><img src=".github/images/dryer-wiring-diagram.jpg" alt="Dryer wiring diagram" /></p>
 
-The motor clamp sensor attaches to the light blue wire that connects the Push To Start Relay to the Drive Motor.
+The 60A motor clamp sensor attaches to the light blue wire that connects the Push To Start Relay to the Drive Motor.
 
-The light clamp sensor attaches to the orange wire that connects the NC terminal of the door switch to the drum lamp.
+The 5A light clamp sensor attaches to the orange wire that connects the NC terminal of the door switch to the drum lamp.
 
 <a id="installation"></a>
 ## Installation
@@ -110,9 +110,9 @@ The light clamp sensor attaches to the orange wire that connects the NC terminal
 <a id="software"></a>
 ### Software
 1. Enable the [SPI](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#spi-overview) kernel module on your Raspberry Pi using `sudo raspi-config` › `3 Interface Options` › `I4 SPI`, then reboot.
-1. Download the [`DryerDuty.zip`](https://github.com/Aldaviva/DryerDuty/releases/download/latest/DryerDuty.zip) file from the [latest release](https://github.com/Aldaviva/DryerDuty/releases/latest) to your Raspberry Pi
-1. Extract the ZIP file to a directory like `/opt/dryerduty/`
-1. Allow the program to be executed by running `chmod +x /opt/dryerduty/DryerDuty`
+1. Download the [`DryerDuty.zip`](https://github.com/Aldaviva/DryerDuty/releases/download/latest/DryerDuty.zip) file from the [latest release](https://github.com/Aldaviva/DryerDuty/releases/latest) to your Raspberry Pi.
+1. Extract the ZIP file to a directory like `/opt/dryerduty/`.
+1. Allow the program to be executed by running `chmod +x /opt/dryerduty/DryerDuty`.
 1. Install the SystemD service by running
     ```sh
     sudo cp /opt/dryerduty/dryerduty.service /etc/systemd/system/
@@ -140,17 +140,17 @@ Create an Integration in PagerDuty and get its Integration Key.
 
 DryerDuty is configured using `appsettings.json` in the installation directory.
 
-- `pagerDutyIntegrationKey` is the Integration Key that PagerDuty gives you when you create a new Events API v2 Integration for one of your Services
-- `motorMinimumActiveAmps` is the minimum current, in amps, which would indicate that the dryer's motor is running
-    - My dryer's motor runs at 4.33A, so I set this to `2.0`
-- `lightMinimumActiveAmps` is the minmum current, in amps, which would indicate that the light bulb in the drum turned on because the door was opened
-    - My 15W bulb runs at 0.08A, so I set this to `0.04`
-- `motorGain` is a coefficient which the motor current is multiplied by to get a more accurate value
-    - The default value is `1.0`, but I had to set mine to `1.64` to match the current readings from my clamp multimeter
-- `lightGain` is a coefficient which the light bulb current is multiplied by to get a more accurate value
-    - The default value is `1.0`, but I had to set mine to `0.75` to match the nominal current of my bulb
-- `Logging.LogLevel` controls the log verbosity, where the key is the namespace and the value is the [log level](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel?view=dotnet-plat-ext-7.0) name
-    - To see current readings from this library, set `Logging.LogLevel.DryerDuty` to `Trace` and run `/opt/dryerduty/DryerDuty` from the command line
+- `pagerDutyIntegrationKey` is the Integration Key that PagerDuty gives you when you create a new Events API v2 Integration for one of your Services.
+- `motorMinimumActiveAmps` is the minimum current, in amps, which would indicate that the dryer's motor is running.
+    - My dryer's motor runs at 4.33A, so I set this to `2.0`.
+- `lightMinimumActiveAmps` is the minmum current, in amps, which would indicate that the light bulb in the drum turned on because the door was opened.
+    - My 15W bulb runs at 0.08A, so I set this to `0.04`.
+- `motorGain` is a coefficient which the motor current is multiplied by to get a more accurate value.
+    - The default value is `1.0`, but I had to set mine to `1.64` to match the current readings from my clamp multimeter.
+- `lightGain` is a coefficient which the light bulb current is multiplied by to get a more accurate value.
+    - The default value is `1.0`, but I had to set mine to `0.75` to match the nominal current of my bulb.
+- `Logging.LogLevel` controls the log verbosity, where the key is the namespace and the value is the [log level](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel?view=dotnet-plat-ext-7.0) name.
+    - To see current readings from this library, set `Logging.LogLevel.DryerDuty` to `Trace` and run `/opt/dryerduty/DryerDuty` from the command line.
 
 <a id="running"></a>
 ## Running
@@ -179,8 +179,8 @@ sudo journalctl -u dryerduty.service
 <a id="references"></a>
 ## References
 - [command-tab/brewbot](https://github.com/command-tab/brewbot)
-- InnovatorsGuru: [SCT-013 Split Core Current Transformer](https://innovatorsguru.com/sct-013-000/)
-- Microsoft: [MCP3xxx family of Analog to Digital Converters](https://github.com/dotnet/iot/blob/main/src/devices/Mcp3xxx/README.md) from [`Iot.Device.Bindings`](https://www.nuget.org/packages/Iot.Device.Bindings)
+- [SCT-013 Split Core Current Transformer (InnovatorsGuru)](https://innovatorsguru.com/sct-013-000/)
+- [MCP3xxx family of Analog to Digital Converters (Microsoft)](https://github.com/dotnet/iot/blob/main/src/devices/Mcp3xxx/README.md)
 - Adafruit
     - [Analog Inputs for Raspberry Pi Using the MCP3008](https://learn.adafruit.com/reading-a-analog-in-and-controlling-audio-volume-with-the-raspberry-pi/overview)
     - [Raspberry Pi Analog to Digital Converters](https://learn.adafruit.com/raspberry-pi-analog-to-digital-converters)

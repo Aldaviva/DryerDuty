@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
-        <RuntimeIdentifier>linux-arm</RuntimeIdentifier>
+        <RuntimeIdentifiers>linux-arm;win-x64;linux-x64</RuntimeIdentifiers>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RollForward>major</RollForward>
@@ -15,6 +15,7 @@
         <Copyright>© 2023 Ben Hutchison</Copyright>
         <Authors>Ben Hutchison</Authors>
         <Company>$(Authors)</Company>
+        <Platforms>AnyCPU;x86;ARM32</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,6 +33,10 @@
         <None Update="dryerduty.service">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="Tests" />
     </ItemGroup>
 
 </Project>
