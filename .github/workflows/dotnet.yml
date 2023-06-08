@@ -26,7 +26,7 @@ jobs:
       run: dotnet restore --locked-mode --verbosity normal
 
     - name: Build
-      run: dotnet build --no-restore --configuration Release --runtime ${{ env.TargetPlatform }} --no-self-contained --verbosity normal
+      run: dotnet build ${{ env.ProjectName }} --no-restore --configuration Release --runtime ${{ env.TargetPlatform }} --no-self-contained --verbosity normal
 
     - name: Test
       shell: bash
