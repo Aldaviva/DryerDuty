@@ -112,7 +112,7 @@ The 5A light clamp sensor attaches to the orange wire that connects the NC termi
 <a id="software"></a>
 ### Software
 1. Enable the [SPI](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#spi-overview) kernel module on your Raspberry Pi using `sudo raspi-config` › `3 Interface Options` › `I4 SPI`, then reboot.
-1. Download the [`DryerDuty.zip`](https://github.com/Aldaviva/DryerDuty/releases/download/latest/DryerDuty.zip) file from the [latest release](https://github.com/Aldaviva/DryerDuty/releases/latest) to your Raspberry Pi.
+1. Download the [`DryerDuty.zip`](https://github.com/Aldaviva/DryerDuty/releases/latest/download/DryerDuty.zip) file from the [latest release](https://github.com/Aldaviva/DryerDuty/releases/latest) to your Raspberry Pi.
 1. Extract the ZIP file to a directory like `/opt/dryerduty/`.
 1. Allow the program to be executed by running `chmod +x /opt/dryerduty/DryerDuty`.
 1. Install the SystemD service by running
