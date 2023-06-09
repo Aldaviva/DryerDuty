@@ -1,3 +1,5 @@
+<p align="center"><a href="https://github.com/Aldaviva/LaundryDuty">Washing Machine</a> &middot; <strong>Dryer</strong></p>
+
 DryerDuty
 ===
 
