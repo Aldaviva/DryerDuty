@@ -24,10 +24,10 @@ DryerDuty
 <a id="behavior"></a>
 ## Behavior
 
-1. When you start a load of laundry in the dryer, a clamp sensor installed inside the dryer detects the increased current flowing from the start button to the motor.
-1. A .NET daemon running on a Raspberry Pi reads the voltage from the clamp sensor using an analog-to-digital converter, and sends a Change event to PagerDuty when the motor starts.
+1. When you start a load of laundry in the dryer, an induction clamp sensor installed inside the dryer detects the increased current flowing from the start button to the motor.
+1. A .NET daemon running on a Raspberry Pi reads the voltage from the induction sensor using an analog-to-digital converter, and sends a Change event to PagerDuty when the motor starts.
 1. When the motor stops, the Raspberry Pi triggers an Alert in PagerDuty. This will notify you on your configured communications channels, like a push notification in the mobile app.
-1. When you open the dryer door to remove the laundry, another clamp sensor detects the door light turning on, and the Raspberry Pi automatically resolves the Alert so you don't keep getting notifications.
+1. When you open the dryer door to remove the laundry, another induction clamp sensor detects the door light turning on, and the Raspberry Pi automatically resolves the Alert so you don't keep getting notifications.
 
 <a id="prerequisites"></a>
 ## Prerequisites
