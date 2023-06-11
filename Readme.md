@@ -19,7 +19,7 @@ DryerDuty
 
 <!-- /MarkdownTOC -->
 
-![Dryer timer dial](.github/images/header.jpg)
+![Dryer timer dial](.github/images/readme-header.jpg)
 
 <a id="behavior"></a>
 ## Behavior
