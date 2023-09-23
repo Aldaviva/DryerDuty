@@ -243,10 +243,10 @@ Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
     The dryer has finished a load of laundry.
     ```
 
+    <p align="center"><img src=".github/images/triggered-alert.png" alt="Alert in the PagerDuty Android app" height="843" /></p>
 1. When the dryer door is opened after it finishes a load, this program will automatically resolve the previously created Alert. You can also manually resolve the Alert from the PagerDuty web or mobile apps.
     
     ![Resolved incident in the PagerDuty webapp](.github/images/resolved-alert.png)
-
 
 <a id="references"></a>
 ## References
