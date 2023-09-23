@@ -15,6 +15,7 @@
 1. [Installation](#installation)
 1. [Configuration](#configuration)
 1. [Running](#running)
+1. [Alerts](#alerts)
 1. [References](#references)
 
 <!-- /MarkdownTOC -->
@@ -100,16 +101,32 @@ The 5 A light clamp sensor attaches to the orange wire that connects the **NC** 
 <a id="hardware"></a>
 ### Hardware
 
-1. Open the drum cabinet of the dryer by unscrewing the two Phillips screws on the lint trap, then prying up on the front edge of the top panel. There are two spring clips that hold it down in the front left and right corners. I used a plastic panel puller to lift the lid. ![lint trap screws](.github/images/lint-trap-screws.jpg) ![cabinet panel puller](.github/images/cabinet-panel-puller.jpg)
-1. Clamp the 5 A current transformer around the orange wire that leads to the door switch on the right side of the cabinet. ![door current sensor](.github/images/light-current-sensor.jpg)
+1. Open the drum cabinet of the dryer by unscrewing the two Phillips screws on the lint trap, then prying up on the front edge of the top panel. There are two spring clips that hold it down in the front left and right corners. I used a plastic panel puller to lift the lid.
+
+    ![lint trap screws](.github/images/lint-trap-screws.jpg)
+
+    ![cabinet panel puller](.github/images/cabinet-panel-puller.jpg)
+1. Clamp the 5 A current transformer around the orange wire that leads to the door switch on the right side of the cabinet.
+    
+    ![door current sensor](.github/images/light-current-sensor.jpg)
 1. Run the end of the wire with the 3.5 mm TRS plug up into the hole in the back center of the lid that leads to the control panel.
 1. Close the cabinet lid and replace the two lint trap screws.
-1. Open the control panel by pushing straight in (not pulling up) under the front left and right corners with a panel puller to release the two spring clips. Pitch the control panel back and rest it on something. ![lint trap screws](.github/images/control-panel-puller.jpg) ![lint trap screws](.github/images/control-panel-open.jpg)
-1. Clamp the 60 A current transformer around one of the two light blue wires leading to the Start button. ![lint trap screws](.github/images/motor-current-sensor.jpg)
-1. Place the Raspberry Pi, connected to the assembled current sensing circuit, underneath the control panel. You may need to stand the Raspberry Pi up on its edge so it will fit. ![lint trap screws](.github/images/pi-installed.jpg)
+1. Open the control panel by pushing straight in (not pulling up) under the front left and right corners with a panel puller to release the two spring clips. Pitch the control panel back and rest it on something.
+    
+    ![lint trap screws](.github/images/control-panel-puller.jpg)
+
+    ![lint trap screws](.github/images/control-panel-open.jpg)
+1. Clamp the 60 A current transformer around one of the two light blue wires leading to the Start button.
+
+    ![lint trap screws](.github/images/motor-current-sensor.jpg)
+1. Place the Raspberry Pi, connected to the assembled current sensing circuit, underneath the control panel. You may need to stand the Raspberry Pi up on its edge so it will fit.
+    
+    ![lint trap screws](.github/images/pi-installed.jpg)
 1. Connect the 3.5 mm TRS plug from the 60 A motor sensor (in the control panel) to the ADC Channel 0 (left) 3.5 mm jack in your circuit.
 1. Connect the 3.5 mm TRS plug from the 5 A door light sensor (in the drum cabinet) to the ADC Channel 1 (right) 3.5 mm jack in your circuit.
-1. Plug the Raspberry Pi into a USB AC power adapter and run the cable underneath the side of the control panel. ![lint trap screws](.github/images/pi-closeup.jpg)
+1. Plug the Raspberry Pi into a USB AC power adapter and run the cable underneath the side of the control panel.
+
+    ![lint trap screws](.github/images/pi-closeup.jpg)
 1. Check one final time that you can SSH into the Raspberry Pi.
 1. Close the control panel.
 
@@ -212,6 +229,24 @@ Sep 23 01:21:10 dryer DryerDuty[340]: DryerDuty.DryerMonitor[0] Timers started
 Sep 23 01:21:11 dryer DryerDuty[340]: Microsoft.Hosting.Lifetime[0] Application started. Hosting environment: Production; Content root path:>
 Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 ```
+
+<a id="alerts"></a>
+## Alerts
+
+1. When the dryer becomes active, this program will send a Change event to PagerDuty with the summary
+    ```text
+    The dryer is starting a load of laundry.
+    ```
+
+1. When the dryer completes the load, this program will trigger a new Alert at the Info severity, with the summary
+    ```text
+    The dryer has finished a load of laundry.
+    ```
+
+1. When the dryer door is opened after it finishes a load, this program will automatically resolve the previously created Alert. You can also manually resolve the Alert from the PagerDuty web or mobile apps.
+    
+    ![Resolved incident in the PagerDuty webapp](.github/images/resolved-alert.png)
+
 
 <a id="references"></a>
 ## References
