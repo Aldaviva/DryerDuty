@@ -8,15 +8,35 @@ using Microsoft.Extensions.Logging;
 
 namespace Tests;
 
-public class ServiceTest: IDisposable {
+public sealed class ServiceTest: IDisposable {
 
     private readonly IServiceHostInterceptor hostInterceptor = new ServiceHostInterceptor();
 
+    private readonly Mcp3xxx adc = A.Fake<Mcp3xxx>();
+
+    public ServiceTest() {
+        A.CallTo(() => adc.Read(A<int>._)).Returns(512);
+    }
+
     [Fact]
     public async Task start() {
-        Mcp3xxx adc = A.Fake<Mcp3xxx>();
-        A.CallTo(() => adc.Read(A<int>._)).Returns(512);
+        hostInterceptor.hostBuilding += (_, builder) => {
+            builder.ConfigureServices(services => {
+                services.RemoveAll<IHostedService>();
+                services.AddHostedService(s => new DryerMonitor(s.GetRequiredService<ILogger<DryerMonitor>>(), s.GetRequiredService<PagerDutyManager>(), s.GetRequiredService<Configuration>(), adc));
 
+                services.RemoveAll<Configuration>();
+                services.AddSingleton(new Configuration { pagerDutyIntegrationKey = "12345" });
+            });
+        };
+
+        Task mainTask = runMainMethod();
+        hostInterceptor.host?.StopAsync();
+        await mainTask;
+    }
+
+    [Fact]
+    public async Task crashOnMissingPagerDutyIntegrationKey() {
         hostInterceptor.hostBuilding += (_, builder) => {
             builder.ConfigureServices(services => {
                 services.RemoveAll<IHostedService>();
@@ -24,14 +44,12 @@ public class ServiceTest: IDisposable {
             });
         };
 
-        MethodInfo mainMethod = typeof(Program).GetMethod("<Main>$", BindingFlags.NonPublic | BindingFlags.Static, new[] { typeof(string[]) })!;
-
-        Task mainTask = (Task) mainMethod.Invoke(null, new object[] { Array.Empty<string>() })!;
-
-        hostInterceptor.host?.StopAsync();
-
-        await mainTask;
+        Func<Task> thrower = async () => await runMainMethod();
+        await thrower.Should().ThrowAsync<ArgumentException>();
     }
+
+    private static async Task runMainMethod() =>
+        await (Task) typeof(Program).GetMethod("<Main>$", BindingFlags.NonPublic | BindingFlags.Static, new[] { typeof(string[]) })!.Invoke(null, new object[] { Array.Empty<string>() })!;
 
     public void Dispose() {
         hostInterceptor.Dispose();

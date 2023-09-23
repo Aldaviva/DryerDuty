@@ -8,10 +8,10 @@ namespace DryerDuty;
 
 public class DryerMonitor: IHostedService, IDisposable {
 
-    internal const int    SAMPLES_PER_WINDOW                   = 120; // 120Hz, Nyquist limit for 60Hz AC sine wave
+    internal const int    SAMPLES_PER_WINDOW                   = 2 * 60; // 120Hz is the Nyquist limit for 60Hz AC sine wave
     private const  int    MOTOR_CHANNEL                        = 0;
     private const  int    LIGHT_CHANNEL                        = 1;
-    private const  int    MAX_ADC_READING                      = (2 << 9) - 1;
+    private const  int    MAX_ADC_READING                      = 1023; // 10-bit unsigned int
     private const  double REFERENCE_VOLTS                      = 3.3;
     private const  double MAX_CURRENT_TRANSFORMER_OUTPUT_VOLTS = 1;
 
@@ -36,12 +36,12 @@ public class DryerMonitor: IHostedService, IDisposable {
         this.logger           = logger;
         this.pagerDutyManager = pagerDutyManager;
         this.config           = config;
+        this.adc              = adc;
 
         for (int i = 0; i < samplesByChannel.Length; i++) {
             samplesByChannel[i] = new int[SAMPLES_PER_WINDOW];
         }
 
-        this.adc         = adc;
         aggregatingTimer = new Timer(samplingWindow) { AutoReset                            = true };
         samplingTimer    = new Timer(samplingWindow.Divide(SAMPLES_PER_WINDOW)) { AutoReset = true };
 
@@ -60,7 +60,6 @@ public class DryerMonitor: IHostedService, IDisposable {
         }
 
         aggregatingTimer.Start();
-        logger.LogInformation("Timers started");
     }
 
     public Task StopAsync(CancellationToken cancellationToken) {
@@ -95,10 +94,10 @@ public class DryerMonitor: IHostedService, IDisposable {
             _                                                                                => state ?? LaundryMachineState.IDLE
         };
 
-        logger.LogTrace("Dryer is {state}, using {motorAmps:N3} amps for the motor and {lightAmps:N3} amps for the light", newState, motorAmps, lightAmps);
-
         bool stateChanged = state != null && state != newState;
         state = newState;
+
+        logger.Log(stateChanged ? LogLevel.Debug : LogLevel.Trace, "Dryer is {state}, using {motorAmps:N3} amps for the motor and {lightAmps:N3} amps for the light", newState, motorAmps, lightAmps);
 
         if (stateChanged) {
             await onStateChange(newState);

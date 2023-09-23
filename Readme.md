@@ -34,13 +34,14 @@
 - [Raspberry Pi 2 Model B rev 1.1](https://www.raspberrypi.com/products/) or later
     - [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/), verified with 11 (Bullseye)
     - [USB Wi-Fi adapter](https://www.canakit.com/raspberry-pi-wifi.html), unless you have a Raspberry Pi 3 or later with built-in Wi-Fi
-    - USB AC adapter with a long enough cable to reach the top of the dryer
+    - USB AC adapter with a sufficiently long cable to reach the top of the dryer
 - [.NET 7 ARM Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
     - Package archives don't offer ARM packages of .NET, so you have to install it using the [installation script](https://dotnet.microsoft.com/en-us/download/dotnet/scripts).
         ```sh
         wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
         sudo bash dotnet-install.sh --channel STS --runtime dotnet --install-dir /usr/share/dotnet/
         sudo ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+
         dotnet --info # make sure the Microsoft.NETCore.App runtime is listed as installed
         rm dotnet-install.sh
         ```
@@ -68,17 +69,19 @@
 <table>
 <thead>
 <tr>
-<th>Visual view</th>
-<th>Schematic view</th>
+<th>Visual diagram</th>
+<th>Schematic diagram</th>
+<th>Photo</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><img src="Circuit/Current sensor.svg" alt="current sensor circuit, visual view" /></td>
-<td><img src="Circuit/Current sensor schematics.svg" alt="current sensor circuit, schematic view" /></td>
+<td width="33%"><img src="Circuit/Current sensor.svg" alt="current sensor circuit, visual view" /></td>
+<td width="33%"><img src="Circuit/Current sensor schematics.svg" alt="current sensor circuit, schematic view" /></td>
+<td width="33%"><img src="Circuit/Current sensor.jpg" alt="current sensor circuit, photo" /></td>
 </tr>
 <tr>
-<td colspan="2" align="center"><a href="Circuit/Current sensor.fzz"><strong>⬇️ Download Fritzing file</strong></a></td>
+<td colspan="3" align="center"><a href="Circuit/Current sensor.fzz"><strong>⬇️ Download Fritzing file</strong></a></td>
 </tr>
 </tbody>
 </table>
@@ -87,9 +90,9 @@
 
 <p><img src=".github/images/dryer-wiring-diagram.jpg" alt="Dryer wiring diagram" /></p>
 
-The 60 A motor clamp sensor attaches to the light blue wire that connects the Push To Start Relay to the Drive Motor.
+The 60 A motor clamp sensor attaches to the light blue wire that connects the **Push To Start Relay** to the **Drive Motor**.
 
-The 5 A light clamp sensor attaches to the orange wire that connects the NC terminal of the Door Switch to the Drum Lamp.
+The 5 A light clamp sensor attaches to the orange wire that connects the **NC** terminal of the **Door Switch** to the **Drum Lamp**.
 
 <a id="installation"></a>
 ## Installation
@@ -97,16 +100,16 @@ The 5 A light clamp sensor attaches to the orange wire that connects the NC term
 <a id="hardware"></a>
 ### Hardware
 
-1. Open the main cabinet of the dryer by unscrewing the two Phillips screws on the lint trap, then prying up on the front edge of the top panel. There are two spring clips that hold it down in the front left and right corners. I used a plastic panel puller to lift the lid.
-1. Clamp the 5 A current transformer around the orange wire that leads to the door switch on the right side of the cabinet.
+1. Open the drum cabinet of the dryer by unscrewing the two Phillips screws on the lint trap, then prying up on the front edge of the top panel. There are two spring clips that hold it down in the front left and right corners. I used a plastic panel puller to lift the lid. ![lint trap screws](.github/images/lint-trap-screws.jpg) ![cabinet panel puller](.github/images/cabinet-panel-puller.jpg)
+1. Clamp the 5 A current transformer around the orange wire that leads to the door switch on the right side of the cabinet. ![door current sensor](.github/images/light-current-sensor.jpg)
 1. Run the end of the wire with the 3.5 mm TRS plug up into the hole in the back center of the lid that leads to the control panel.
 1. Close the cabinet lid and replace the two lint trap screws.
-1. Open the control panel by pushing straight in (not pulling up) under the front left and right corners with a panel puller to release the two spring clips. Pitch the control panel back and rest it on something.
-1. Clamp the 60 A current transformer around one of the two light blue wires leading to the Start button.
-1. Place the Raspberry Pi, connected to the assembled current sensing circuit, underneath the control panel. You may need to stand the Raspberry Pi up on its edge so it will fit.
-1. Connect the 3.5 mm TRS plug from the 60 A motor sensor (above) to the ADC Channel 0 (left) 3.5 mm jack in your circuit.
-1. Connect the 3.5 mm TRS plug from the 5 A door light sensor (below) to the ADC Channel 1 (right) 3.5 mm jack in your circuit.
-1. Plug the Raspberry Pi in to a USB AC power adapter and run the cable underneath the side of the control panel.
+1. Open the control panel by pushing straight in (not pulling up) under the front left and right corners with a panel puller to release the two spring clips. Pitch the control panel back and rest it on something. ![lint trap screws](.github/images/control-panel-puller.jpg) ![lint trap screws](.github/images/control-panel-open.jpg)
+1. Clamp the 60 A current transformer around one of the two light blue wires leading to the Start button. ![lint trap screws](.github/images/motor-current-sensor.jpg)
+1. Place the Raspberry Pi, connected to the assembled current sensing circuit, underneath the control panel. You may need to stand the Raspberry Pi up on its edge so it will fit. ![lint trap screws](.github/images/pi-installed.jpg)
+1. Connect the 3.5 mm TRS plug from the 60 A motor sensor (in the control panel) to the ADC Channel 0 (left) 3.5 mm jack in your circuit.
+1. Connect the 3.5 mm TRS plug from the 5 A door light sensor (in the drum cabinet) to the ADC Channel 1 (right) 3.5 mm jack in your circuit.
+1. Plug the Raspberry Pi into a USB AC power adapter and run the cable underneath the side of the control panel. ![lint trap screws](.github/images/pi-closeup.jpg)
 1. Check one final time that you can SSH into the Raspberry Pi.
 1. Close the control panel.
 
@@ -114,11 +117,24 @@ The 5 A light clamp sensor attaches to the orange wire that connects the NC term
 ### Software
 1. Enable the [SPI](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#spi-overview) kernel module on your Raspberry Pi using `sudo raspi-config` › `3 Interface Options` › `I4 SPI`, then reboot.
 1. Download the [`DryerDuty.zip`](https://github.com/Aldaviva/DryerDuty/releases/latest/download/DryerDuty.zip) file from the [latest release](https://github.com/Aldaviva/DryerDuty/releases/latest) to your Raspberry Pi.
-1. Extract the ZIP file to a directory like `/opt/dryerduty/`.
-1. Allow the program to be executed by running `chmod +x /opt/dryerduty/DryerDuty`.
-1. Install the SystemD service by running
     ```sh
-    sudo cp /opt/dryerduty/dryerduty.service /etc/systemd/system/
+    wget https://github.com/Aldaviva/DryerDuty/releases/latest/download/DryerDuty.zip
+    ```
+1. Extract the ZIP file to a directory like `/opt/dryerduty/`.
+    ```sh
+    sudo mkdir /opt/dryerduty
+    sudo unzip DryerDuty.zip -d /opt/dryerduty
+    rm DryerDuty.zip
+    ```
+1. Allow the program to be executed.
+    ```sh
+    sudo chmod +x /opt/dryerduty/DryerDuty
+    ```
+1. Install the SystemD service.
+    ```sh
+    # if you chose a different installation directory from /opt/dryerduty, edit ExecStart and WorkingDirectory in dryerduty.service
+    sudo mv /opt/dryerduty/dryerduty.service /etc/systemd/system/
+
     sudo systemctl daemon-reload
     sudo systemctl enable dryerduty.service
     ```
@@ -136,7 +152,7 @@ Create an Integration in PagerDuty and get its Integration Key.
 1. Select an existing Service for which you want to publish events, or create a new Service.
 1. In the Integrations tab of the Service, add a new Integration.
 1. Under Most popular integrations, select Events API V2, then click Add.
-1. Expand the newly-created Integration and copy its **Integration Key**, which will be used to authorize this program to send Events to the correct Service.
+1. Expand the newly created Integration and copy its **Integration Key**, which will be used to authorize this program to send Events to the correct Service.
 
 <a id="dryerduty"></a>
 ### DryerDuty
@@ -146,10 +162,10 @@ DryerDuty is configured using `appsettings.json` in the installation directory.
 - `pagerDutyIntegrationKey` is the Integration Key that PagerDuty gives you when you create a new Events API v2 Integration for one of your Services.
 - `motorMinimumActiveAmps` is the minimum current, in amps, which would indicate that the dryer's motor is running.
     - My dryer's motor runs at 4.33 A, so I set this to `2.0`.
-- `lightMinimumActiveAmps` is the minmum current, in amps, which would indicate that the light bulb in the drum turned on because the door was opened.
+- `lightMinimumActiveAmps` is the minimum current, in amps, which would indicate that the light bulb in the drum turned on because the door was opened.
     - My 15 W bulb runs at 0.08 A, so I set this to `0.04`.
 - `motorGain` is a coefficient which the motor current is multiplied by to get a more accurate value.
-    - The default value is `1.0`, but I had to set mine to `1.64` to match the current readings from my clamp multimeter.
+    - The default value is `1.0`, but I had to set mine to `1.64` to match the current readings from my [clamp multimeter](https://www.kleintools.com/catalog/clamp-meters/acdc-digital-clamp-meter-auto-ranging-400-amp).
 - `lightGain` is a coefficient which the light bulb current is multiplied by to get a more accurate value.
     - The default value is `1.0`, but I had to set mine to `0.75` to match the nominal current of my bulb.
 - `Logging.LogLevel` controls the log verbosity, where the key is the namespace and the value is the [log level](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel?view=dotnet-plat-ext-7.0) name.
@@ -159,24 +175,42 @@ DryerDuty is configured using `appsettings.json` in the installation directory.
 ## Running
 
 <a id="starting-the-service"></a>
-### Starting the service
+### Start or restart the service
 
 ```sh
-sudo systemctl start dryerduty.service
+sudo systemctl restart dryerduty.service
 ```
 
 <a id="checking-status"></a>
-### Checking status
+### Check status
 
 ```sh
 sudo systemctl status dryerduty.service
+🟢 dryerduty.service - DryerDuty
+     Loaded: loaded (/etc/systemd/system/dryerduty.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sat 2023-09-23 01:21:11 PDT; 2h 44min ago
+   Main PID: 340 (DryerDuty)
+      Tasks: 19 (limit: 1714)
+        CPU: 3min 25.970s
+     CGroup: /system.slice/dryerduty.service
+             └─340 /opt/dryerduty/DryerDuty
+
+Sep 23 01:21:03 dryer systemd[1]: Starting DryerDuty...
+Sep 23 01:21:10 dryer DryerDuty[340]: DryerDuty.DryerMonitor[0] Timers started
+Sep 23 01:21:11 dryer DryerDuty[340]: Microsoft.Hosting.Lifetime[0] Application started. Hosting environment: Production; Content root path: /opt/dryerduty
+Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 ```
 
 <a id="viewing-logs"></a>
-### Viewing logs
+### View logs
 
 ```sh
 sudo journalctl -u dryerduty.service
+-- Journal begins at Tue 2023-05-02 17:25:51 PDT, ends at Sat 2023-09-23 04:06:51 PDT. --
+Sep 23 01:21:03 dryer systemd[1]: Starting DryerDuty...
+Sep 23 01:21:10 dryer DryerDuty[340]: DryerDuty.DryerMonitor[0] Timers started
+Sep 23 01:21:11 dryer DryerDuty[340]: Microsoft.Hosting.Lifetime[0] Application started. Hosting environment: Production; Content root path:>
+Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 ```
 
 <a id="references"></a>
