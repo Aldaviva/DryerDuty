@@ -1,7 +1,7 @@
 using DryerDuty;
 using Iot.Device.Adc;
 using Microsoft.Extensions.Logging.Abstractions;
-using Pager.Duty;
+using Pager.Duty.Requests;
 
 namespace Tests;
 

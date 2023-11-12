@@ -1,6 +1,9 @@
 ﻿using DryerDuty;
 using Microsoft.Extensions.Logging.Abstractions;
 using Pager.Duty;
+using Pager.Duty.Exceptions;
+using Pager.Duty.Requests;
+using Pager.Duty.Responses;
 
 namespace Tests;
 

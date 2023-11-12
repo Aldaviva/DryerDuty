@@ -11,7 +11,7 @@
         <ServerGarbageCollection>true</ServerGarbageCollection>
         <NoWarn>CS8524</NoWarn>
 
-        <Version>0.0.1</Version>
+        <Version>0.1.0</Version>
         <Copyright>© 2023 Ben Hutchison</Copyright>
         <Authors>Ben Hutchison</Authors>
         <Company>$(Authors)</Company>
@@ -25,7 +25,7 @@
 
     <ItemGroup>
         <PackageReference Include="Iot.Device.Bindings" Version="3.0.0" />
-        <PackageReference Include="PagerDuty" Version="0.0.1" />
+        <PackageReference Include="PagerDuty" Version="1.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="7.0.0" />
     </ItemGroup>
 

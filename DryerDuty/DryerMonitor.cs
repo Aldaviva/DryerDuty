@@ -1,7 +1,7 @@
-﻿using System.Device.Spi;
+﻿using Iot.Device.Adc;
+using Pager.Duty.Requests;
+using System.Device.Spi;
 using System.Timers;
-using Iot.Device.Adc;
-using Pager.Duty;
 using Timer = System.Timers.Timer;
 
 namespace DryerDuty;
