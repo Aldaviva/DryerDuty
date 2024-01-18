@@ -1,10 +1,10 @@
-﻿using System.Reflection;
-using DryerDuty;
+﻿using DryerDuty;
 using Iot.Device.Adc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace Tests;
 
@@ -44,8 +44,8 @@ public sealed class ServiceTest: IDisposable {
             });
         };
 
-        Func<Task> thrower = async () => await runMainMethod();
-        await thrower.Should().ThrowAsync<ArgumentException>();
+        Func<Task> thrower = runMainMethod;
+        await thrower.Should().ThrowWithinAsync<ArgumentException>(TimeSpan.FromSeconds(15));
     }
 
     private static async Task runMainMethod() =>

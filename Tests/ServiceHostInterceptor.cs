@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace Tests;
 
@@ -27,7 +27,6 @@ internal class ServiceHostInterceptor: IObserver<DiagnosticListener>, IObserver<
     public IHost? host { get; private set; }
 
     public event EventHandler<HostBuilder>? hostBuilding;
-
     public event EventHandler<IHost>? hostBuilt;
 
     public ServiceHostInterceptor() {

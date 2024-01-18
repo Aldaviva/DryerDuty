@@ -12,7 +12,7 @@
         <NoWarn>CS8524</NoWarn>
 
         <Version>0.1.0</Version>
-        <Copyright>© 2023 Ben Hutchison</Copyright>
+        <Copyright>© 2024 Ben Hutchison</Copyright>
         <Authors>Ben Hutchison</Authors>
         <Company>$(Authors)</Company>
         <Platforms>AnyCPU;x86;ARM32</Platforms>
@@ -24,9 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Iot.Device.Bindings" Version="3.0.0" />
-        <PackageReference Include="PagerDuty" Version="1.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="7.0.0" />
+        <PackageReference Include="Iot.Device.Bindings" Version="3.1.0" />
+        <PackageReference Include="PagerDuty" Version="1.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup>
