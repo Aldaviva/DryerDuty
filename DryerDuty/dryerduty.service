@@ -1,12 +1,8 @@
-# Copy this file to /etc/systemd/system/
-#
-# Install:           sudo systemctl daemon-reload
+# Install:           sudo cp dryerduty.service /etc/systemd/system/ && sudo systemctl daemon-reload
 # Enable auto-start: sudo systemctl enable dryerduty.service
 # Start:             sudo systemctl start dryerduty.service
 # Check status:      sudo systemctl status dryerduty.service
 # Read logs:         sudo journalctl -u dryerduty.service
-#
-# Source: https://devblogs.microsoft.com/dotnet/net-core-and-systemd/
 
 [Unit]
 Description=DryerDuty
