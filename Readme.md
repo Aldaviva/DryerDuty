@@ -36,14 +36,20 @@
     - [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/), verified with 11 (Bullseye)
     - [USB Wi-Fi adapter](https://www.canakit.com/raspberry-pi-wifi.html), unless you have a Raspberry Pi 3 or later with built-in Wi-Fi
     - USB AC adapter with a sufficiently long cable to reach the top of the dryer
-- [.NET 7 ARM Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
-    - Package archives don't offer ARM packages of .NET, so you have to install it using the [installation script](https://dotnet.microsoft.com/en-us/download/dotnet/scripts).
+- [.NET 7 ARM32 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
+    - Neither Raspberry Pi OS or Microsoft package archives offer APT packages of .NET for ARM
+    - You can install .NET using [my unofficial APT repository of .NET for Raspberry Pi](https://github.com/Aldaviva/RaspberryPiDotnetRepository), packaged from official Microsoft builds
+        ```sh
+        sudo wget -q https://west.aldaviva.com/raspbian/aldaviva.gpg.key -O /etc/apt/trusted.gpg.d/aldaviva.gpg
+        echo "deb https://west.aldaviva.com/raspbian/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/aldaviva.list > /dev/null
+        sudo apt update
+        sudo apt install -y dotnet-runtime-latest
+        ```
+    - Alternatively, you can install .NET using Microsoft's [installation script](https://dotnet.microsoft.com/en-us/download/dotnet/scripts), but it won't update with APT or choose the latest version
         ```sh
         wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
-        sudo bash dotnet-install.sh --channel STS --runtime dotnet --install-dir /usr/share/dotnet/
+        sudo bash dotnet-install.sh --channel LTS --runtime dotnet --install-dir /usr/share/dotnet/
         sudo ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-
-        dotnet --info # make sure the Microsoft.NETCore.App runtime is listed as installed
         rm dotnet-install.sh
         ```
 - [PagerDuty account](https://www.pagerduty.com/sign-up/) (the [free plan](https://www.pagerduty.com/sign-up-free/?type=free) is sufficient)
