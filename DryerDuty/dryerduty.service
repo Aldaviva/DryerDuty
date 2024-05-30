@@ -11,6 +11,7 @@ Description=DryerDuty
 Type=notify
 ExecStart=/opt/dryerduty/DryerDuty
 WorkingDirectory=/opt/dryerduty/
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
