@@ -7,7 +7,7 @@
 
 *Notify you when your dryer has finished a load of laundry by sending a PagerDuty alert.*
 
-<!-- MarkdownTOC autolink="true" bracket="round" autoanchor="true" levels="1,2" bullets="1.,-,-,-" -->
+<!-- MarkdownTOC autolink="true" bracket="round" autoanchor="false" levels="1,2" bullets="1.,-,-,-" -->
 
 1. [Behavior](#behavior)
 1. [Prerequisites](#prerequisites)
@@ -17,12 +17,12 @@
 1. [Running](#running)
 1. [Alerts](#alerts)
 1. [References](#references)
+1. [Presentation](#presentation)
 
 <!-- /MarkdownTOC -->
 
 ![Dryer timer dial](.github/images/readme-header.jpg)
 
-<a id="behavior"></a>
 ## Behavior
 
 1. When you start a load of laundry in the dryer, an induction clamp sensor installed inside the dryer detects the increased current flowing from the start button to the motor.
@@ -30,7 +30,6 @@
 1. When the motor stops, the Raspberry Pi triggers an Alert in PagerDuty. This will notify you on your configured communications channels, like a push notification in the mobile app.
 1. When you open the dryer door to remove the laundry, another induction clamp sensor detects the door light turning on, and the Raspberry Pi automatically resolves the Alert so you don't keep getting notifications.
 
-<a id="prerequisites"></a>
 ## Prerequisites
 - [Raspberry Pi 2 Model B rev 1.1](https://www.raspberrypi.com/products/) or later
     - [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/), verified with 11 (Bullseye)
@@ -68,7 +67,6 @@
     - [Breadboard](https://www.digikey.com/en/products/detail/adafruit-industries-llc/64/7241427) (easy, but loose connections are likely) or [perforated permanent-prototype board](https://www.digikey.com/en/products/detail/adafruit-industries-llc/1609/5353655) (requires soldering, but connections will be solid)
     - Wires or [jumper](https://www.adafruit.com/product/826) [cables](https://www.adafruit.com/product/758) to connect the components
 
-<a id="circuit-diagrams"></a>
 ## Circuit diagrams
 
 ### Current sensor
@@ -101,7 +99,6 @@ The 60 A motor clamp sensor attaches to the light blue wire that connects the **
 
 The 5 A light clamp sensor attaches to the orange wire that connects the **NC** terminal of the **Door Switch** to the **Drum Lamp**.
 
-<a id="installation"></a>
 ## Installation
 
 <a id="hardware"></a>
@@ -162,7 +159,6 @@ The 5 A light clamp sensor attaches to the orange wire that connects the **NC** 
     sudo systemctl enable dryerduty.service
     ```
 
-<a id="configuration"></a>
 ## Configuration
 
 <a id="pagerduty"></a>
@@ -194,7 +190,6 @@ DryerDuty is configured using `appsettings.json` in the installation directory.
 - `Logging.LogLevel` controls the log verbosity, where the key is the namespace and the value is the [log level](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel?view=dotnet-plat-ext-7.0) name.
     - To see current readings from this library, set `Logging.LogLevel.DryerDuty` to `Trace` and run `/opt/dryerduty/DryerDuty` from the command line.
 
-<a id="running"></a>
 ## Running
 
 <a id="starting-the-service"></a>
@@ -236,7 +231,6 @@ Sep 23 01:21:11 dryer DryerDuty[340]: Microsoft.Hosting.Lifetime[0] Application 
 Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 ```
 
-<a id="alerts"></a>
 ## Alerts
 
 1. When the dryer becomes active, this program will send a Change event to PagerDuty with the summary
@@ -252,7 +246,6 @@ Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
     <img src=".github/images/triggered-alert.png" alt="Alert in the PagerDuty Android app" width="30.4%" valign="top" /> <img src=".github/images/resolved-alert.png" alt="Alert in the PagerDuty webapp" width="69.0%" valign="top" />
 1. When the dryer door is opened after it finishes a load, this program will automatically resolve the previously created Alert. You can also manually resolve the Alert from the PagerDuty web or mobile apps.
 
-<a id="references"></a>
 ## References
 - [command-tab/brewbot (Collin Allen)](https://github.com/command-tab/brewbot)
 - [SCT-013 Split Core Current Transformer (InnovatorsGuru)](https://innovatorsguru.com/sct-013-000/)
@@ -269,3 +262,12 @@ Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
     - [Current Transformer Installation](https://docs.openenergymonitor.org/electricity-monitoring/ct-sensors/installation.html)
     - [CT Sensors - Interfacing with an Arduino](https://docs.openenergymonitor.org/electricity-monitoring/ct-sensors/interface-with-arduino.html)
     - [How to build an Arduino energy monitor - measuring mains voltage and current](https://openenergymonitor.github.io/forum-archive/node/58.html)
+
+## Presentation
+
+I gave a talk about this project during PagerDuty's 2024-02-09 How-To Happy Hour on their [Twitch channel](https://twitch.tv/pagerduty).
+
+- [🎞 Video recording](https://www.youtube.com/watch?v=0Gui4cGQ2ds)
+- [💡 Community spotlight](https://www.pagerduty.com/blog/community-spotlight-ben-hutchison/)
+
+[![Video](https://i.ytimg.com/vi/0Gui4cGQ2ds/hqdefault.jpg)](https://www.youtube.com/watch?v=0Gui4cGQ2ds)
