@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Iot.Device.Bindings" Version="3.1.0" />
+        <PackageReference Include="Iot.Device.Bindings" Version="3.2.0" />
         <PackageReference Include="PagerDuty" Version="1.1.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
     </ItemGroup>
