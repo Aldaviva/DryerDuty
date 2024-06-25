@@ -35,7 +35,7 @@
     - [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/), verified with 11 (Bullseye)
     - [USB Wi-Fi adapter](https://www.canakit.com/raspberry-pi-wifi.html), unless you have a Raspberry Pi 3 or later with built-in Wi-Fi
     - USB AC adapter with a sufficiently long cable to reach the top of the dryer
-- [.NET 7 ARM32 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
+- [.NET 8 ARM32 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
     - Neither Raspberry Pi OS or Microsoft package archives offer APT packages of .NET for ARM
     - You can install .NET using [my unofficial APT repository of .NET for Raspberry Pi](https://github.com/Aldaviva/RaspberryPiDotnetRepository), packaged from official Microsoft builds
         ```sh

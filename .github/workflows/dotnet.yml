@@ -9,13 +9,12 @@ jobs:
   build:
     env:
       ProjectName: DryerDuty
-      TargetPlatform: linux-arm
 
     runs-on: ubuntu-latest
 
     steps:
     - name: Clone
-      uses: actions/checkout@v3.5.2
+      uses: actions/checkout@v4
 
     - name: Initialize test reporting
       uses: testspace-com/setup-testspace@v1
@@ -26,8 +25,15 @@ jobs:
       run: dotnet restore --locked-mode
 
     - name: Build
-      run: dotnet build ${{ env.ProjectName }} --no-restore --configuration Release --runtime ${{ env.TargetPlatform }} --no-self-contained
+      run: |
+        dotnet build ${{ env.ProjectName }} --no-restore --configuration Release --runtime linux-arm --no-self-contained
+        dotnet build ${{ env.ProjectName }} --no-restore --configuration Release --runtime linux-arm64 --no-self-contained
 
+    - name: Publish
+      run: |
+        dotnet publish ${{ env.ProjectName }} --no-build --configuration Release -p:PublishSingleFile=true --runtime linux-arm --no-self-contained
+        dotnet publish ${{ env.ProjectName }} --no-build --configuration Release -p:PublishSingleFile=true --runtime linux-arm64 --no-self-contained
+      
     - name: Test
       shell: bash
       run: |
@@ -48,16 +54,24 @@ jobs:
     - name: Stop if tests failed
       run: exit ${{ env.TEST_EXIT_CODE }}
 
-    - name: Publish
-      run: dotnet publish ${{ env.ProjectName }} --no-build --configuration Release -p:PublishSingleFile=true --runtime ${{ env.TargetPlatform }} --no-self-contained
-      
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3.1.2
+    - name: Upload ARM32 artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.ProjectName }}
+        name: ${{ env.ProjectName }}-linux-arm32
         path: |
-          ${{ env.ProjectName }}/bin/Release/net7.0/${{ env.TargetPlatform }}/publish/${{ env.ProjectName }}
-          ${{ env.ProjectName }}/bin/Release/net7.0/${{ env.TargetPlatform }}/publish/appsettings.json
-          ${{ env.ProjectName }}/bin/Release/net7.0/${{ env.TargetPlatform }}/publish/*.service
-          ${{ env.ProjectName }}/bin/Release/net7.0/${{ env.TargetPlatform }}/publish/*.so
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm/publish/${{ env.ProjectName }}
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm/publish/appsettings.json
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm/publish/*.service
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm/publish/*.so
+        if-no-files-found: error
+
+    - name: Upload ARM64 artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ProjectName }}-linux-arm64
+        path: |
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm64/publish/${{ env.ProjectName }}
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm64/publish/appsettings.json
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm64/publish/*.service
+          ${{ env.ProjectName }}/bin/Release/net8.0/linux-arm64/publish/*.so
         if-no-files-found: error

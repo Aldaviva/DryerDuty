@@ -2,7 +2,7 @@
 # Enable auto-start: sudo systemctl enable dryerduty.service
 # Start:             sudo systemctl start dryerduty.service
 # Check status:      sudo systemctl status dryerduty.service
-# Read logs:         sudo journalctl -u dryerduty.service
+# Read logs:         sudo journalctl -f -u dryerduty.service
 
 [Unit]
 Description=DryerDuty

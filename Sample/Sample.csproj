@@ -1,16 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RuntimeIdentifier>linux-arm</RuntimeIdentifier>
-        <Platforms>AnyCPU;x86</Platforms>
+        <RuntimeIdentifiers>linux-arm;linux-x86</RuntimeIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Iot.Device.Bindings" Version="2.2.0" />
+        <PackageReference Include="Iot.Device.Bindings" Version="3.1.0" />
     </ItemGroup>
 
 </Project>
