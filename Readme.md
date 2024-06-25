@@ -16,8 +16,8 @@
 1. [Configuration](#configuration)
 1. [Running](#running)
 1. [Alerts](#alerts)
-1. [References](#references)
 1. [Presentation](#presentation)
+1. [References](#references)
 
 <!-- /MarkdownTOC -->
 
@@ -32,11 +32,13 @@
 
 ## Prerequisites
 - [Raspberry Pi 2 Model B rev 1.1](https://www.raspberrypi.com/products/) or later
-    - [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/), verified with 11 (Bullseye)
+    - [Raspberry Pi OS (Raspbian) Lite](https://www.raspberrypi.com/software/operating-systems/)
+        - 32-bit or 64-bit
     - [USB Wi-Fi adapter](https://www.canakit.com/raspberry-pi-wifi.html), unless you have a Raspberry Pi 3 or later with built-in Wi-Fi
     - USB AC adapter with a sufficiently long cable to reach the top of the dryer
-- [.NET 8 ARM32 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet) or later
-    - Neither Raspberry Pi OS or Microsoft package archives offer APT packages of .NET for ARM
+- [.NET Runtime 8 for Linux](https://dotnet.microsoft.com/en-us/download/dotnet) or later
+    - ARM32 or ARM64
+    - Neither Raspberry Pi nor Microsoft package repositories offer APT packages of .NET for ARM
     - You can install .NET using [my unofficial APT repository of .NET for Raspberry Pi](https://github.com/Aldaviva/RaspberryPiDotnetRepository), packaged from official Microsoft builds
         ```sh
         sudo wget -q https://raspbian.aldaviva.com/aldaviva.gpg.key -O /etc/apt/trusted.gpg.d/aldaviva.gpg
@@ -101,7 +103,6 @@ The 5 A light clamp sensor attaches to the orange wire that connects the **NC** 
 
 ## Installation
 
-<a id="hardware"></a>
 ### Hardware
 
 1. Open the drum cabinet of the dryer by unscrewing the two Phillips screws on the lint trap, then prying up on the front edge of the top panel. There are two spring clips that hold it down in the front left and right corners. I used a plastic panel puller to lift the lid.
@@ -133,7 +134,6 @@ The 5 A light clamp sensor attaches to the orange wire that connects the **NC** 
 1. Check one final time that you can SSH into the Raspberry Pi.
 1. Close the control panel.
 
-<a id="software"></a>
 ### Software
 1. Enable the [SPI](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#spi-overview) kernel module on your Raspberry Pi using `sudo raspi-config` › `3 Interface Options` › `I4 SPI`, then reboot.
 1. Download the [`DryerDuty.zip`](https://github.com/Aldaviva/DryerDuty/releases/latest/download/DryerDuty.zip) file from the [latest release](https://github.com/Aldaviva/DryerDuty/releases/latest) to your Raspberry Pi.
@@ -152,16 +152,14 @@ The 5 A light clamp sensor attaches to the orange wire that connects the **NC** 
     ```
 1. Install the SystemD service.
     ```sh
-    # if you chose a different installation directory from /opt/dryerduty, edit ExecStart and WorkingDirectory in dryerduty.service
+    # if you chose an installation directory that isn't /opt/dryerduty, edit ExecStart and WorkingDirectory in dryerduty.service
     sudo mv /opt/dryerduty/dryerduty.service /etc/systemd/system/
-
     sudo systemctl daemon-reload
     sudo systemctl enable dryerduty.service
     ```
 
 ## Configuration
 
-<a id="pagerduty"></a>
 ### PagerDuty
 
 Create an Integration in PagerDuty and get its Integration Key.
@@ -173,7 +171,6 @@ Create an Integration in PagerDuty and get its Integration Key.
 1. Under Most popular integrations, select Events API V2, then click Add.
 1. Expand the newly created Integration and copy its **Integration Key**, which will be used to authorize this program to send Events to the correct Service.
 
-<a id="dryerduty"></a>
 ### DryerDuty
 
 DryerDuty is configured using `appsettings.json` in the installation directory.
@@ -192,14 +189,12 @@ DryerDuty is configured using `appsettings.json` in the installation directory.
 
 ## Running
 
-<a id="starting-the-service"></a>
-### Start or restart the service
+### Restart the service
 
 ```sh
 sudo systemctl restart dryerduty.service
 ```
 
-<a id="checking-status"></a>
 ### Check status
 
 ```sh
@@ -219,11 +214,10 @@ Sep 23 01:21:11 dryer DryerDuty[340]: Microsoft.Hosting.Lifetime[0] Application 
 Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 ```
 
-<a id="viewing-logs"></a>
 ### View logs
 
 ```sh
-sudo journalctl -u dryerduty.service
+sudo journalctl -f -u dryerduty.service
 -- Journal begins at Tue 2023-05-02 17:25:51 PDT, ends at Sat 2023-09-23 04:06:51 PDT. --
 Sep 23 01:21:03 dryer systemd[1]: Starting DryerDuty...
 Sep 23 01:21:10 dryer DryerDuty[340]: DryerDuty.DryerMonitor[0] Timers started
@@ -233,7 +227,7 @@ Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 
 ## Alerts
 
-1. When the dryer becomes active, this program will send a Change event to PagerDuty with the summary
+1. When the dryer starts running, this program will send a Change event to PagerDuty with the summary
     ```text
     The dryer is starting a load of laundry.
     ```
@@ -245,6 +239,15 @@ Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
 
     <img src=".github/images/triggered-alert.png" alt="Alert in the PagerDuty Android app" width="30.4%" valign="top" /> <img src=".github/images/resolved-alert.png" alt="Alert in the PagerDuty webapp" width="69.0%" valign="top" />
 1. When the dryer door is opened after it finishes a load, this program will automatically resolve the previously created Alert. You can also manually resolve the Alert from the PagerDuty web or mobile apps.
+
+## Presentation
+
+I gave a talk about this project for PagerDuty's 2024-02-09 How-To Happy Hour on their [Twitch channel](https://twitch.tv/pagerduty).
+
+- [🎞 Video recording](https://www.youtube.com/watch?v=0Gui4cGQ2ds)
+- [💡 Community spotlight](https://www.pagerduty.com/blog/community-spotlight-ben-hutchison/)
+
+[![Video](https://i.ytimg.com/vi/0Gui4cGQ2ds/hqdefault.jpg)](https://www.youtube.com/watch?v=0Gui4cGQ2ds)
 
 ## References
 - [command-tab/brewbot (Collin Allen)](https://github.com/command-tab/brewbot)
@@ -262,12 +265,3 @@ Sep 23 01:21:11 dryer systemd[1]: Started DryerDuty.
     - [Current Transformer Installation](https://docs.openenergymonitor.org/electricity-monitoring/ct-sensors/installation.html)
     - [CT Sensors - Interfacing with an Arduino](https://docs.openenergymonitor.org/electricity-monitoring/ct-sensors/interface-with-arduino.html)
     - [How to build an Arduino energy monitor - measuring mains voltage and current](https://openenergymonitor.github.io/forum-archive/node/58.html)
-
-## Presentation
-
-I gave a talk about this project during PagerDuty's 2024-02-09 How-To Happy Hour on their [Twitch channel](https://twitch.tv/pagerduty).
-
-- [🎞 Video recording](https://www.youtube.com/watch?v=0Gui4cGQ2ds)
-- [💡 Community spotlight](https://www.pagerduty.com/blog/community-spotlight-ben-hutchison/)
-
-[![Video](https://i.ytimg.com/vi/0Gui4cGQ2ds/hqdefault.jpg)](https://www.youtube.com/watch?v=0Gui4cGQ2ds)
