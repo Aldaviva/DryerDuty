@@ -29,9 +29,9 @@
       },
       "PagerDuty": {
         "type": "Direct",
-        "requested": "[1.1.0, )",
-        "resolved": "1.1.0",
-        "contentHash": "wlaKOSEruJW43+mp8Zjj66ULmRtdoyMROGEGzdZHB9ek4fiyGL2v9xnR+jVHzZ75znJRTITqEXWCXAZ568A13g==",
+        "requested": "[1.1.2, )",
+        "resolved": "1.1.2",
+        "contentHash": "pv5m7KiBjT8LA2Ifc50eT59CyIx3teTg3taGD6/B0+K8ROAw61YDsjKROXtxcGH+WiD6X46vGFyNI4FozLwYrg==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.3"
         }

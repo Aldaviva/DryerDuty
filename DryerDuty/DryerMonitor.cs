@@ -23,7 +23,7 @@ public class DryerMonitor: IHostedService, IDisposable {
     private readonly Timer                 samplingTimer;
     private readonly Timer                 aggregatingTimer;
     private readonly int[][]               samplesByChannel          = new int[2][];
-    private readonly int[]                 maxCurrentTransformerAmps = { 60, 5 };
+    private readonly int[]                 maxCurrentTransformerAmps = [60, 5];
 
     internal LaundryMachineState? state;
     internal string?              pagerDutyLaundryDoneDedupKey;

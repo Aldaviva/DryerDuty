@@ -15,15 +15,7 @@ public interface PagerDutyManager {
 
 }
 
-public class PagerDutyManagerImpl: PagerDutyManager {
-
-    private readonly IPagerDuty                    pagerDuty;
-    private readonly ILogger<PagerDutyManagerImpl> logger;
-
-    public PagerDutyManagerImpl(IPagerDuty pagerDuty, ILogger<PagerDutyManagerImpl> logger) {
-        this.pagerDuty = pagerDuty;
-        this.logger    = logger;
-    }
+public class PagerDutyManagerImpl(IPagerDuty pagerDuty, ILogger<PagerDutyManagerImpl> logger): PagerDutyManager {
 
     public async Task createChange() {
         try {

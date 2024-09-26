@@ -20,4 +20,11 @@ using IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+/*var logger = host.Services.GetRequiredService<ILogger<Program>>();
+RuntimeUpgradeNotifier.RestartBehavior = RestartBehavior.AutoRestartSystemdService;
+RuntimeUpgradeNotifier.RuntimeUpgraded += (_, _) => {
+    logger.LogWarning(".NET Runtime {oldVersion} has been upgraded to a new version. Restarting this service to use the new runtime and avoid future crashes.", Environment.Version.ToString(3));
+    return ValueTask.CompletedTask;
+};*/
+
 await host.RunAsync();
