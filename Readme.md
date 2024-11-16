@@ -41,9 +41,7 @@
     - Neither Raspberry Pi nor Microsoft package repositories offer APT packages of .NET for ARM
     - You can install .NET using [my unofficial APT repository of .NET for Raspberry Pi](https://github.com/Aldaviva/RaspberryPiDotnetRepository), packaged from official Microsoft builds
         ```sh
-        sudo wget -q https://raspbian.aldaviva.com/aldaviva.gpg.key -O /etc/apt/trusted.gpg.d/aldaviva.gpg
-        echo "deb https://raspbian.aldaviva.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/aldaviva.list > /dev/null
-        sudo apt update
+        wget -qO- https://raspbian.aldaviva.com/addrepo.sh | sh
         sudo apt install -y dotnet-runtime-latest
         ```
     - Alternatively, you can install .NET using Microsoft's [installation script](https://dotnet.microsoft.com/en-us/download/dotnet/scripts), but it won't update with APT or choose the latest version
