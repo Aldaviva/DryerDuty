@@ -35,10 +35,10 @@
     - [Raspberry Pi OS (Raspbian) Lite](https://www.raspberrypi.com/software/operating-systems/)
         - 32-bit or 64-bit
     - [USB Wi-Fi adapter](https://www.canakit.com/raspberry-pi-wifi.html), unless you have a Raspberry Pi 3 or later with built-in Wi-Fi
-    - USB AC adapter with a sufficiently long cable to reach the top of the dryer
+    - [USB AC](https://vilros.com/products/2-5a-micro-usb-power-supply-on-off-switch) [adapter](https://vilros.com/products/vilros-27w-5v-5a-raspberry-pi-5-compatible-usb-c-power-supply) with a sufficiently long cable to reach the top of the dryer
 - [.NET Runtime 8 for Linux](https://dotnet.microsoft.com/en-us/download/dotnet) or later
     - ARM32 or ARM64
-    - Neither Raspberry Pi nor Microsoft package repositories offer APT packages of .NET for ARM
+    - Neither Raspberry Pi nor Microsoft package repositories offer APT packages of .NET for ARM.
     - You can install .NET using [my unofficial APT repository of .NET for Raspberry Pi](https://github.com/Aldaviva/RaspberryPiDotnetRepository), packaged from official Microsoft builds
         ```sh
         wget -qO- https://raspbian.aldaviva.com/addrepo.sh | sh
@@ -54,7 +54,7 @@
 - [PagerDuty account](https://www.pagerduty.com/sign-up/) (the [free plan](https://www.pagerduty.com/sign-up-free/?type=free) is sufficient)
 - Clothes dryer
     - [Kenmore 500 series 11065102310 240V 26A electric dryer](https://www.searspartsdirect.com/model/32k35liyt3-000582/kenmore-11065102310-dryer-parts)
-    - The door light must be working for this program to detect when the door is opened, so you must replace the bulb if it has burned out.
+    - The door light must be working for this program to detect when the door is opened, so you must replace the bulb if it has burnt out.
     - Make sure you use the OEM-style [E12 incandescent light bulbs](https://www.amazon.com/dp/B07XNPL2RW) instead of [LED replacements](https://www.amazon.com/dp/B08K32T7Y2), because the LEDs don't draw enough current to be easily detectable.
 - Current sensor circuit
     - <strong><a href="https://www.digikey.com/short/dzwtnnnf"><img src="https://icons.duckduckgo.com/ip3/digikey.com.ico" height="16" alt="Digi-Key" /> View all parts on Digi-Key</a></strong>
