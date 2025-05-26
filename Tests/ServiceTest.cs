@@ -1,4 +1,4 @@
-﻿using DryerDuty;
+using DryerDuty;
 using Iot.Device.Adc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

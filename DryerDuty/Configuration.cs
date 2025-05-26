@@ -1,4 +1,4 @@
-﻿namespace DryerDuty;
+namespace DryerDuty;
 
 public class Configuration {
 

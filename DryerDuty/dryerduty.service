@@ -1,8 +1,8 @@
 # Install:           sudo cp dryerduty.service /etc/systemd/system/ && sudo systemctl daemon-reload
 # Enable auto-start: sudo systemctl enable dryerduty.service
 # Start:             sudo systemctl start dryerduty.service
-# Check status:      sudo systemctl status dryerduty.service
-# Read logs:         sudo journalctl -f -u dryerduty.service
+# Check status:      systemctl status dryerduty.service
+# Read logs:         journalctl -f -u dryerduty.service
 
 [Unit]
 Description=DryerDuty

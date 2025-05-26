@@ -1,4 +1,4 @@
-﻿using System.Device.Spi;
+using System.Device.Spi;
 using Iot.Device.Adc;
 
 Console.WriteLine("Starting...");

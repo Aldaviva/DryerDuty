@@ -1,4 +1,4 @@
-﻿using DryerDuty;
+using DryerDuty;
 using Microsoft.Extensions.Logging.Abstractions;
 using Pager.Duty;
 using Pager.Duty.Exceptions;

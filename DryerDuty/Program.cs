@@ -1,5 +1,7 @@
-﻿using DryerDuty;
+using DryerDuty;
 using Pager.Duty;
+using RuntimeUpgrade.Notifier;
+using RuntimeUpgrade.Notifier.Data;
 
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseSystemd()
@@ -20,11 +22,10 @@ using IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-/*var logger = host.Services.GetRequiredService<ILogger<Program>>();
-RuntimeUpgradeNotifier.RestartBehavior = RestartBehavior.AutoRestartSystemdService;
-RuntimeUpgradeNotifier.RuntimeUpgraded += (_, _) => {
-    logger.LogWarning(".NET Runtime {oldVersion} has been upgraded to a new version. Restarting this service to use the new runtime and avoid future crashes.", Environment.Version.ToString(3));
-    return ValueTask.CompletedTask;
-};*/
+using RuntimeUpgradeNotifier upgradeNotifier = new() {
+    LoggerFactory   = host.Services.GetRequiredService<ILoggerFactory>(),
+    RestartStrategy = RestartStrategy.AutoRestartService,
+    ExitStrategy    = new HostedLifetimeExit(host)
+};
 
 await host.RunAsync();

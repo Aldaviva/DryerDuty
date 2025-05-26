@@ -11,9 +11,10 @@
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <ServerGarbageCollection>true</ServerGarbageCollection>
         <NoWarn>CS8524</NoWarn>
+        <SelfContained>false</SelfContained>
 
-        <Version>0.1.0</Version>
-        <Copyright>© 2024 Ben Hutchison</Copyright>
+        <Version>0.2.0</Version>
+        <Copyright>© 2025 Ben Hutchison</Copyright>
         <Authors>Ben Hutchison</Authors>
         <Company>$(Authors)</Company>
         <Platforms>AnyCPU;x86;ARM32</Platforms>
@@ -24,15 +25,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Iot.Device.Bindings" Version="3.2.0" />
+        <PackageReference Include="Iot.Device.Bindings" Version="4.0.1" />
         <PackageReference Include="PagerDuty" Version="1.1.2" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="9.0.5" />
+        <PackageReference Include="RuntimeUpgradeNotifier" Version="1.0.0-beta8" />
+        <PackageReference Include="ThrottleDebounce" Version="3.0.0-beta2" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="dryerduty.service">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <None Update="dryerduty.service" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>

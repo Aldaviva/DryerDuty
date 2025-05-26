@@ -1,4 +1,4 @@
-﻿using Iot.Device.Adc;
+using Iot.Device.Adc;
 using Pager.Duty.Requests;
 using System.Device.Spi;
 using System.Timers;
@@ -88,10 +88,10 @@ public class DryerMonitor: IHostedService, IDisposable {
         double lightAmps = getRmsAmps(LIGHT_CHANNEL) * config.lightGain;
 
         LaundryMachineState newState = state switch {
-            LaundryMachineState.IDLE or null when motorAmps >= config.motorMinimumActiveAmps => LaundryMachineState.ACTIVE,
-            LaundryMachineState.ACTIVE when motorAmps < config.motorMinimumActiveAmps        => LaundryMachineState.COMPLETE,
-            LaundryMachineState.COMPLETE when lightAmps >= config.lightMinimumActiveAmps     => LaundryMachineState.IDLE,
-            _                                                                                => state ?? LaundryMachineState.IDLE
+            not LaundryMachineState.ACTIVE when motorAmps >= config.motorMinimumActiveAmps => LaundryMachineState.ACTIVE,
+            LaundryMachineState.ACTIVE when motorAmps < config.motorMinimumActiveAmps      => LaundryMachineState.COMPLETE,
+            LaundryMachineState.COMPLETE when lightAmps >= config.lightMinimumActiveAmps   => LaundryMachineState.IDLE,
+            _                                                                              => state ?? LaundryMachineState.IDLE
         };
 
         bool stateChanged = state != null && state != newState;
@@ -109,7 +109,10 @@ public class DryerMonitor: IHostedService, IDisposable {
             case LaundryMachineState.ACTIVE:
                 logger.LogInformation("Started a load of laundry");
                 await pagerDutyManager.createChange();
-                pagerDutyLaundryDoneDedupKey = null;
+                if (pagerDutyLaundryDoneDedupKey != null) {
+                    await pagerDutyManager.resolveIncident(pagerDutyLaundryDoneDedupKey);
+                    pagerDutyLaundryDoneDedupKey = null;
+                }
                 break;
 
             case LaundryMachineState.COMPLETE:
