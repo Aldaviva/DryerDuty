@@ -29,7 +29,7 @@
         <PackageReference Include="PagerDuty" Version="1.1.2" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="9.0.5" />
         <PackageReference Include="RuntimeUpgradeNotifier" Version="1.0.0-beta8" />
-        <PackageReference Include="ThrottleDebounce" Version="3.0.0-beta2" />
+        <PackageReference Include="ThrottleDebounce" Version="3.0.0-beta3" />
     </ItemGroup>
 
     <ItemGroup>
