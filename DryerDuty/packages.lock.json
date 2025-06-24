@@ -47,9 +47,9 @@
       },
       "ThrottleDebounce": {
         "type": "Direct",
-        "requested": "[3.0.0-beta3, )",
-        "resolved": "3.0.0-beta3",
-        "contentHash": "pZTefK4xZEvc5Q+M63lIAKVl8ZDsPWiUvuFk1+d9q3Hmgme76P3qC07Ho40ccaUiUKQYnO3a/dnu/SD8CsPZqQ=="
+        "requested": "[3.0.0-beta4, )",
+        "resolved": "3.0.0-beta4",
+        "contentHash": "COoRYQqWRZmENa7YQk7UrFISMBkdhECX1wasSFMy5am34ok5s1JYDgS8Ea5WLk0L/iau1jM904bldCZZF56xAQ=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
