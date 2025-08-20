@@ -2,7 +2,7 @@ using Pager.Duty;
 using Pager.Duty.Exceptions;
 using Pager.Duty.Requests;
 using Pager.Duty.Responses;
-using ThrottleDebounce;
+using ThrottleDebounce.Retry;
 
 namespace DryerDuty;
 
@@ -20,17 +20,17 @@ public class PagerDutyManagerImpl: PagerDutyManager {
 
     private readonly IPagerDuty                    pagerDuty;
     private readonly ILogger<PagerDutyManagerImpl> logger;
-    private readonly Retrier.Options               retryOptions;
+    private readonly RetryOptions                  retryOptions;
 
     public PagerDutyManagerImpl(IPagerDuty pagerDuty, ILogger<PagerDutyManagerImpl> logger) {
         this.pagerDuty = pagerDuty;
         this.logger    = logger;
 
-        retryOptions = new Retrier.Options {
+        retryOptions = new RetryOptions {
             MaxAttempts    = 18, // https://dotnetfiddle.net/H7VD8k
-            Delay          = Retrier.Delays.Exponential(TimeSpan.FromSeconds(0.25)),
-            IsRetryAllowed = e => e is PagerDutyException { RetryAllowedAfterDelay: true },
-            BeforeRetry    = (retryCount, e) => logger.LogWarning(e, "Retrying failed PagerDuty request (#{retry:N0}/{max:N0})", retryCount, 18)
+            Delay          = Delays.Exponential(TimeSpan.FromSeconds(0.25)),
+            IsRetryAllowed = (e, _) => e is PagerDutyException { RetryAllowedAfterDelay: true },
+            BeforeRetry    = (e, retryCount) => logger.LogWarning(e, "Retrying failed PagerDuty request (#{retry:N0}/{max:N0})", retryCount, 18)
         };
     }
 
