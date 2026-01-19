@@ -4,18 +4,18 @@
     "net8.0": {
       "Iot.Device.Bindings": {
         "type": "Direct",
-        "requested": "[4.0.1, )",
-        "resolved": "4.0.1",
-        "contentHash": "WfiSNhGDwiOtRFU5MkJhlHL6BK7O69tIyGNU9eJXEST9D3hjNfpBrgi8p6tRP/OLHkQG77ZXVCccJ3LjAwjrdg==",
+        "requested": "[4.1.0, )",
+        "resolved": "4.1.0",
+        "contentHash": "bDSWfu/o2PME0bZKCe6KHihtlLVbSICjg2lMOqxtaFmgUGHI6KUY4q3wyOVGgTibjHcMKKvGl5MvGUwP4IrM9g==",
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
-          "System.Device.Gpio": "4.0.1",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
+          "System.Device.Gpio": "4.1.0",
           "System.Drawing.Common": "8.0.8",
           "System.IO.Pipelines": "8.0.0",
           "System.IO.Ports": "8.0.0",
-          "System.Management": "5.0.0",
-          "System.Text.Json": "8.0.4",
-          "UnitsNet": "5.42.0"
+          "System.Management": "8.0.0",
+          "System.Text.Json": "8.0.5",
+          "UnitsNet": "5.74.0"
         }
       },
       "Microsoft.Extensions.Hosting.Systemd": {
@@ -390,8 +390,8 @@
       },
       "System.Device.Gpio": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "0kLetV4AsPCDC7pDnEs20fh/GJO8CITubSmVmiuRA5bIATUuYbo7YSYbw4daEaMOPvUX9zk65GcfHmMwGWWFBg=="
+        "resolved": "4.1.0",
+        "contentHash": "Ip7o1kJ8B/UL5+7/21treDxue2/5Is6bfC3KWEBEYX5LH8jvRiypL1Muoe4HdEHa728Ge6t+5PZ7x02ibPp5Jg=="
       },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
@@ -448,8 +448,8 @@
       },
       "UnitsNet": {
         "type": "Transitive",
-        "resolved": "5.42.0",
-        "contentHash": "WCkkHsInoq531Q9yagXtfMbtceoAZzufp370iHA8aPnlnlV5E4AMn7hSFxZGGgNGhQBxmNJqJ4tBo0fm4G1TgA=="
+        "resolved": "5.74.0",
+        "contentHash": "aj5klH43LvitOz0lC+6MnVy+uj6DR8shwnzIGsmtRAhHJN6XxtC4mdn+MbkOlZ20dGgGKrIwh4LBQMAf7SL9uA=="
       }
     },
     "net8.0/linux-arm": {
