@@ -20,7 +20,8 @@ public class PagerDutyManagerImpl: PagerDutyManager {
 
     private readonly IPagerDuty                    pagerDuty;
     private readonly ILogger<PagerDutyManagerImpl> logger;
-    private readonly RetryOptions                  retryOptions;
+
+    internal RetryOptions retryOptions;
 
     public PagerDutyManagerImpl(IPagerDuty pagerDuty, ILogger<PagerDutyManagerImpl> logger) {
         this.pagerDuty = pagerDuty;

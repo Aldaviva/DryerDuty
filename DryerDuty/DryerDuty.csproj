@@ -14,7 +14,7 @@
         <SelfContained>false</SelfContained>
 
         <Version>0.2.0</Version>
-        <Copyright>© 2025 Ben Hutchison</Copyright>
+        <Copyright>© 2026 Ben Hutchison</Copyright>
         <Authors>Ben Hutchison</Authors>
         <Company>$(Authors)</Company>
         <Platforms>AnyCPU;x86;ARM32</Platforms>
@@ -22,22 +22,17 @@
 
     <ItemGroup>
         <AdditionalFiles Include="ExceptionAdjustments.txt" />
+        <None Include="..\Readme.md;..\.github*\**" />
+        <None Update="dryerduty.service" CopyToOutputDirectory="PreserveNewest" />
+        <InternalsVisibleTo Include="Tests" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Iot.Device.Bindings" Version="4.0.1" />
+        <PackageReference Include="Iot.Device.Bindings" Version="4.1.0" />
         <PackageReference Include="PagerDuty" Version="1.1.2" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.2" />
         <PackageReference Include="RuntimeUpgradeNotifier" Version="1.0.1" />
         <PackageReference Include="ThrottleDebounce" Version="3.0.0-beta5" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="dryerduty.service" CopyToOutputDirectory="PreserveNewest" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <InternalsVisibleTo Include="Tests" />
     </ItemGroup>
 
 </Project>
