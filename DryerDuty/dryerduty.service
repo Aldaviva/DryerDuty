@@ -5,13 +5,14 @@
 # Read logs:         journalctl -f -u dryerduty.service
 
 [Unit]
-Description=DryerDuty
+Description=Dryer Duty
 
 [Service]
 Type=notify
 ExecStart=/opt/dryerduty/DryerDuty
 WorkingDirectory=/opt/dryerduty/
 Restart=on-failure
+KillSignal=SIGINT
 
 [Install]
 WantedBy=multi-user.target

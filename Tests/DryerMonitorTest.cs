@@ -91,7 +91,7 @@ public class DryerMonitorTest: IDisposable {
 
         await dryerMonitor.StartAsync(CancellationToken.None);
 
-        pagerDutyChangeCreated.Wait(TimeSpan.FromSeconds(10));
+        pagerDutyChangeCreated.Wait(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
         dryerMonitor.state.Should().Be(LaundryMachineState.ACTIVE);
         A.CallTo(() => pagerDutyManager.createChange()).MustHaveHappenedOnceExactly();
 
@@ -99,7 +99,7 @@ public class DryerMonitorTest: IDisposable {
 
         A.CallTo(() => adc.Read(0)).Returns(512);
 
-        await Task.Delay(3000);
+        await Task.Delay(3000, TestContext.Current.CancellationToken);
 
         dryerMonitor.state.Should().NotBe(LaundryMachineState.COMPLETE);
         A.CallTo(() => pagerDutyManager.createIncident(A<Severity>._, A<string>._, A<string>._)).MustNotHaveHappened();
@@ -107,7 +107,7 @@ public class DryerMonitorTest: IDisposable {
 
     [Fact]
     public void publicConstructor() {
-        Action thrower = () => new DryerMonitor(NullLogger<DryerMonitor>.Instance, pagerDutyManager, config);
+        Action thrower = () => _ = new DryerMonitor(NullLogger<DryerMonitor>.Instance, pagerDutyManager, config);
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
             thrower.Should().Throw<PlatformNotSupportedException>();
         } else {

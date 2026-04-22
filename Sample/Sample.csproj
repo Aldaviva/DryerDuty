@@ -5,7 +5,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RuntimeIdentifiers>linux-arm;linux-x86</RuntimeIdentifiers>
+        <RuntimeIdentifiers>linux-arm;linux-arm64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>

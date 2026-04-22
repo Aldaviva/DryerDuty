@@ -31,7 +31,7 @@ public sealed class ServiceTest: IDisposable {
         };
 
         Task mainTask = runMainMethod();
-        hostInterceptor.host?.StopAsync();
+        hostInterceptor.host?.StopAsync(TestContext.Current.CancellationToken);
         await mainTask;
     }
 
@@ -49,7 +49,7 @@ public sealed class ServiceTest: IDisposable {
     }
 
     private static async Task runMainMethod() =>
-        await (Task) typeof(Program).GetMethod("<Main>$", BindingFlags.NonPublic | BindingFlags.Static, new[] { typeof(string[]) })!.Invoke(null, new object[] { Array.Empty<string>() })!;
+        await (Task) typeof(Program).GetMethod("<Main>$", BindingFlags.NonPublic | BindingFlags.Static, [typeof(string[])])!.Invoke(null, [Array.Empty<string>()])!;
 
     public void Dispose() {
         hostInterceptor.Dispose();
