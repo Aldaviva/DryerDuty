@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <RuntimeIdentifiers>linux-arm;linux-arm64;win-x64;linux-x64</RuntimeIdentifiers>
+        <Platforms>AnyCPU;x86;ARM32</Platforms>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RollForward>latestMajor</RollForward>
@@ -14,10 +15,9 @@
         <SelfContained>false</SelfContained>
 
         <Version>0.2.0</Version>
-        <Copyright>© 2026 Ben Hutchison</Copyright>
         <Authors>Ben Hutchison</Authors>
+        <Copyright>© 2026 $(Authors)</Copyright>
         <Company>$(Authors)</Company>
-        <Platforms>AnyCPU;x86;ARM32</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,9 +29,9 @@
 
     <ItemGroup>
         <PackageReference Include="Iot.Device.Bindings" Version="4.2.0" />
-        <PackageReference Include="PagerDuty" Version="1.1.2" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.8" />
-        <PackageReference Include="RuntimeUpgradeNotifier" Version="1.1.0" />
+        <PackageReference Include="PagerDuty" Version="1.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.12" />
+        <PackageReference Include="RuntimeUpgradeNotifier" Version="1.2.0" />
         <PackageReference Include="ThrottleDebounce" Version="3.0.0-beta6" />
     </ItemGroup>
 
