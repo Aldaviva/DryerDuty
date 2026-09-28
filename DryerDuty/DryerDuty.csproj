@@ -32,7 +32,7 @@
         <PackageReference Include="PagerDuty" Version="1.2.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.12" />
         <PackageReference Include="RuntimeUpgradeNotifier" Version="1.2.0" />
-        <PackageReference Include="ThrottleDebounce" Version="3.0.0-beta6" />
+        <PackageReference Include="ThrottleDebounce" Version="3.0.0" />
     </ItemGroup>
 
 </Project>
