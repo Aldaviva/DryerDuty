@@ -13,8 +13,8 @@ public class PagerDutyManagerTest {
     private readonly PagerDutyManagerImpl pagerDutyManager;
 
     public PagerDutyManagerTest() {
-        pagerDutyManager                          = new PagerDutyManagerImpl(pagerDuty, new NullLogger<PagerDutyManagerImpl>());
-        pagerDutyManager.retryOptions.MaxAttempts = 2;
+        pagerDutyManager              = new PagerDutyManagerImpl(pagerDuty, new NullLogger<PagerDutyManagerImpl>());
+        pagerDutyManager.retryOptions = pagerDutyManager.retryOptions with { MaxAttempts = 2 };
     }
 
     [Fact]
