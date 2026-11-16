@@ -30,7 +30,7 @@
     <ItemGroup>
         <PackageReference Include="Iot.Device.Bindings" Version="4.2.0" />
         <PackageReference Include="PagerDuty" Version="1.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.12" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="11.0.0" />
         <PackageReference Include="RuntimeUpgradeNotifier" Version="1.2.0" />
         <PackageReference Include="ThrottleDebounce" Version="3.0.0" />
     </ItemGroup>
